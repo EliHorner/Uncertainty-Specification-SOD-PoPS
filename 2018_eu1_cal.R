@@ -81,9 +81,7 @@ write_outputs <- "None"
 output_folder_path <- ""
 network_filename <- ""
 network_movement <- "walk"
-use_distance <- FALSE
-use_rmse <- FALSE
-use_mcc <- TRUE
+success_metric <- "mcc and quantity"
 
 sod_2018 <- calibrate(infected_years_file,
                       number_of_observations,
@@ -159,9 +157,7 @@ sod_2018 <- calibrate(infected_years_file,
                       output_folder_path,
                       network_filename,
                       network_movement,
-                      use_distance,
-                      use_rmse,
-                      use_mcc)
+                      success_metric)
 
 
 # save(sod_2018, file = "sod_2018.RData")
