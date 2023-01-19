@@ -71,8 +71,8 @@ uncertRuns <- function(case = 'all', years = 1){
                                  network_movement,
                                  initial_condition_uncertainty,
                                  host_uncertainty)
-    writeRaster(eu1_all$simulation_mean, 'All_Mean')
-    writeRaster(eu1_all$simulation_sd, 'All_SD')
+    terra::writeRaster(eu1_all$simulation_mean, 'All_Mean.tif')
+    terra::writeRaster(eu1_all$simulation_sd, 'All_SD.tif')
     out = cbind(eu1_all$number_infecteds, eu1_all$infected_areas)
     colnames(out) <- rep(c('num all', 'area all'), years)
     return(out)
@@ -149,8 +149,8 @@ uncertRuns <- function(case = 'all', years = 1){
                              network_movement,
                              initial_condition_uncertainty,
                              host_uncertainty)
-    writeRaster(eu1_nohost$simulation_mean, 'NoHost_Mean')
-    writeRaster(eu1_nohost$simulation_sd, 'NoHost_SD')
+    terra::writeRaster(eu1_nohost$simulation_mean, 'NoHost_Mean.tif')
+    terra::writeRaster(eu1_nohost$simulation_sd, 'NoHost_SD.tif')
     out = cbind(eu1_nohost$number_infecteds, eu1_nohost$infected_areas)
     colnames(out) <- rep(c('num nohost', 'area nohost'), years)
     return(out)
@@ -227,8 +227,8 @@ uncertRuns <- function(case = 'all', years = 1){
                              network_movement,
                              initial_condition_uncertainty,
                              host_uncertainty)
-    writeRaster(eu1_noic$simulation_mean, 'NoIC_Mean')
-    writeRaster(eu1_noic$simulation_sd, 'NoIC_SD')
+    terra::writeRaster(eu1_noic$simulation_mean, 'NoIC_Mean.tif')
+    terra::writeRaster(eu1_noic$simulation_sd, 'NoIC_SD.tif')
     out = cbind(eu1_noic$number_infecteds, eu1_noic$infected_areas)
     colnames(out) <- rep(c('num noic', 'area noic'), years)
     return(out)
@@ -305,8 +305,8 @@ uncertRuns <- function(case = 'all', years = 1){
                                   network_movement,
                                   initial_condition_uncertainty,
                                   host_uncertainty)
-    writeRaster(eu1_nopar$simulation_mean, 'NoPar_Mean')
-    writeRaster(eu1_nopar$simulation_sd, 'NoPar_SD')
+    terra::writeRaster(eu1_nopar$simulation_mean, 'NoPar_Mean.tif')
+    terra::writeRaster(eu1_nopar$simulation_sd, 'NoPar_SD.tif')
     out = cbind(eu1_nopar$number_infecteds, eu1_nopar$infected_areas)
     colnames(out) <- rep(c('num nopar', 'area nopar'), years)
     return(out)
@@ -383,8 +383,8 @@ uncertRuns <- function(case = 'all', years = 1){
                                       network_movement,
                                       initial_condition_uncertainty,
                                       host_uncertainty)
-    writeRaster(eu1_host$simulation_mean, 'Host_Mean')
-    writeRaster(eu1_host$simulation_sd, 'Host_SD')
+    terra::writeRaster(eu1_host$simulation_mean, 'Host_Mean.tif')
+    terra::writeRaster(eu1_host$simulation_sd, 'Host_SD.tif')
     out = cbind(eu1_host$number_infecteds, eu1_host$infected_areas)
     colnames(out) <- rep(c('num host', 'area host'), years)
     return(out)
@@ -461,8 +461,8 @@ uncertRuns <- function(case = 'all', years = 1){
                                     network_movement,
                                     initial_condition_uncertainty,
                                     host_uncertainty)
-    writeRaster(eu1_ic$simulation_mean, 'IC_Mean')
-    writeRaster(eu1_ic$simulation_sd, 'IC_SD')
+    terra::writeRaster(eu1_ic$simulation_mean, 'IC_Mean.tif')
+    terra::writeRaster(eu1_ic$simulation_sd, 'IC_SD.tif')
     out = cbind(eu1_ic$number_infecteds, eu1_ic$infected_areas)
     colnames(out) <- rep(c('num ic', 'area ic'), years)
     return(out)
@@ -539,8 +539,8 @@ uncertRuns <- function(case = 'all', years = 1){
                                      network_movement,
                                      initial_condition_uncertainty,
                                      host_uncertainty)
-    writeRaster(eu1_par$simulation_mean, 'Par_Mean')
-    writeRaster(eu1_par$simulation_sd, 'Par_SD')
+    terra::writeRaster(eu1_par$simulation_mean, 'Par_Mean.tif')
+    terra::writeRaster(eu1_par$simulation_sd, 'Par_SD.tif')
     out = cbind(eu1_par$number_infecteds, eu1_par$infected_areas)
     colnames(out) <- rep(c('num par', 'area par'), years)
     return(out)
@@ -617,8 +617,8 @@ uncertRuns <- function(case = 'all', years = 1){
                              network_movement,
                              initial_condition_uncertainty,
                              host_uncertainty)
-    writeRaster(eu1_none$simulation_mean, 'None_Mean')
-    writeRaster(eu1_none$simulation_sd, 'None_SD')
+    terra::writeRaster(eu1_none$simulation_mean, 'None_Mean.tif')
+    terra::writeRaster(eu1_none$simulation_sd, 'None_SD.tif')
     out = cbind(eu1_none$number_infecteds, eu1_none$infected_areas)
     colnames(out) <- rep(c('num none', 'area none'), years)
     return(out)
