@@ -13,7 +13,7 @@ setff("In", "H:/Shared drives/Data/Raster/Regional/SOD_OR/")
 setupList <- c('all', 'host', 'ic', 'par', 'none')
 
 infected_file <- ffIn("End of Year Infections/mean_sd_end_inf_2021_eu1.tif")
-host_file <- ffIn("Hosts/test_mean_sd_hosts_sum.tif")
+host_file <- ffIn("Hosts/mean_sd_hosts_sum.tif")
 total_populations_file <- ffIn("Hosts/lemma_max100m.tif")
 means <- read.table('parameters/eu1_2019_means.csv', header = F)
 parameter_means <- t(means)
