@@ -453,6 +453,7 @@ par_df <- data.frame(Parameter =  c('Par 1' , 'Par 2', 'Par 3', 'Par 4', 'None')
                      Variance = c(eu1_par1$infected_areas[2], eu1_par2$infected_areas[2], eu1_par3$infected_areas[2], eu1_par4$infected_areas[2], eu1_par_none$infected_areas[2]))
 par_df$PctCh <- round((((par_df$Variance / par_df$Variance[5]) - 1) * 100), 2)
 
+library(ggplot2)
 parplot <- ggplot(data = par_df, aes(x = Parameter, y = Variance, fill = Parameter, label = PctCh)) +
          geom_bar(stat = 'identity') +
          scale_fill_brewer(palette = 'Set3') +
