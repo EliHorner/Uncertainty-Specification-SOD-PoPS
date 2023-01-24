@@ -1,0 +1,12 @@
+#Load in Rasters (names same as file)
+All_Mean_R <- terra::rast('All_Mean.tif')
+All_SD_R <- terra::rast('All_SD.tif')
+None_Mean_R <- terra::rast('None_Mean.tif')
+None_SD_R <- terra::rast('None_SD.tif')
+Host_Mean_R <- terra::rast('Host_Mean.tif')
+Host_SD_R <- terra::rast('Host_SD.tif')
+IC_Mean_R <- terra::rast('IC_Mean.tif')
+IC_SD_R <- terra::rast('IC_SD.tif')
+Par_Mean_R <- terra::rast('Par_Mean.tif')
+Par_SD_R <- terra::rast('Par_SD.tif')
+
