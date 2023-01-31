@@ -6,6 +6,8 @@ library(folderfun)
 library(doParallel)
 # library(plyr)
 
+sTime <- proc.time()
+
 setff("In", "H:/Shared drives/Data/Raster/Regional/SOD_OR/")
 
 setupList <- c('all', 'host', 'ic', 'par', 'none')
@@ -140,3 +142,5 @@ mbarplot <- ggplot(data = plot_df_m, aes(x = factor(plot, level = c('Jan', 'Feb'
   theme_minimal() +
   labs(title = 'PoPS Monthly Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
   geom_text(size = 3, position = position_stack(vjust = 0.5))
+
+eTime <- proc.time() - sTime
