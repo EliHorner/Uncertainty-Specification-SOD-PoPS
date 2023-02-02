@@ -120,7 +120,13 @@ plot_df2 <- data.frame(
 
 
 library(ggplot2)
-ggplot(data = plot_df2, aes(x = plot, y = area, fill = type, label = paste((100 * pct), '%', sep =''))) +
+barvarpct2 <- ggplot(data = plot_df2, aes(x = plot, y = area, fill = type, label = paste((100 * pct), '%', sep =''))) +
+  geom_bar(stat = 'identity') +
+  scale_fill_brewer(palette = 'Set1') +
+  theme_minimal() +
+  labs(title = 'PoPS Uncertainty Partitioning (2 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
+  geom_text(size = 3, position = position_stack(vjust = 0.5))
+constbarvarpct2 <- ggplot(data = plot_df2, aes(x = plot, y = pct, fill = type, label = paste((100 * pct), '%', sep =''))) +
   geom_bar(stat = 'identity') +
   scale_fill_brewer(palette = 'Set1') +
   theme_minimal() +

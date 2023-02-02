@@ -120,4 +120,10 @@ barvarpct <- ggplot(data = plot_df, aes(x = plot, y = area, fill = type, label =
   labs(title = 'PoPS Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
   geom_text(size = 3, position = position_stack(vjust = 0.5))
 
+constbarvarpct <- ggplot(data = plot_df, aes(x = plot, y = pct, fill = type, label = paste((100 * pct), '%', sep =''))) +
+  geom_bar(stat = 'identity') +
+  scale_fill_brewer(palette = 'Set1') +
+  theme_minimal() +
+  labs(title = 'PoPS Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
+  geom_text(size = 3, position = position_stack(vjust = 0.5))
 eTime <- proc.time() - sTime
