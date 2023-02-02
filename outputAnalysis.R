@@ -63,6 +63,19 @@ Host_Rast <- Host_SD_E - None_SD_E
 IC_Rast <- IC_SD_E - None_SD_E
 Interactions_Rast <- All_SD_E - IC_Rast - Parameter_Rast - Process_Rast - Host_Rast
 
+Process_Mean <- None_Mean_E
+Parameter_Mean <- Par_Mean_E - None_Mean_E
+Host_Mean <- Host_Mean_E - None_Mean_E
+IC_Mean <- IC_Mean_E - None_Mean_E
+Interactions_Mean <- All_Mean_E - IC_Mean - Parameter_Mean - Process_Mean - Host_Mean
+
+pro3 <- aggregate(Process_Rast, fact = 3, fun = 'mean')
+par3 <- aggregate(Parameter_Rast, fact = 3, fun = 'mean')
+h3 <- aggregate(Host_Rast, fact = 3, fun = 'mean') 
+ic3 <- aggregate(IC_Rast, fact = 3, fun = 'mean') 
+int3 <- aggregate(Interactions_Rast, fact = 3, fun = 'mean') 
+all3 <- aggregate(All_SD_E, fact = 3, fun = 'mean')
+
 Process_Prob <- None_Prob_E
 Parameter_Prob <- Par_Prob_E - None_Prob_E
 Host_Prob <- Host_Prob_E - None_Prob_E
@@ -121,4 +134,21 @@ terra::plot(Parameter_Rast / All_SD_E, main = 'Parameter', col = testpal, ext = 
 terra::plot(Host_Rast / All_SD_E, main = 'Host', col = testpal, ext = multiWindow, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 10))
 terra::plot(IC_Rast / All_SD_E, main = 'IC', col = testpal, ext = multiWindow, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 10))
 terra::plot(Interactions_Rast / All_SD_E, main = 'Interactions', col = testpal, ext = multiWindow, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 10))
+par(mfrow = c(1,1))
+
+par(mfrow = c(2,3))
+terra::plot(all3, main = 'Overall Uncertainty (Infections)', ext = multiWindow)
+terra::plot(pro3 / all3, main = 'Process', col = testpal, ext = multiWindow, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 10))
+terra::plot(par3 / all3, main = 'Parameter', col = testpal, ext = multiWindow, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 10))
+terra::plot(h3 / all3, main = 'Host', col = testpal, ext = multiWindow, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 10))
+terra::plot(ic3 / all3, main = 'IC', col = testpal, ext = multiWindow, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 10))
+terra::plot(int3 / all3, main = 'Interactions', col = testpal, ext = multiWindow, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 10))
+par(mfrow = c(1,1))
+
+par(mfrow = c(2,3))
+terra::plot(All_SD_E, main = 'Overall Uncertainty (Infections)', ext = multiWindow)
+terra::plot(None_SD_E, main = 'Process', ext = multiWindow)
+terra::plot(Par_SD_E, main = 'Parameter', ext = multiWindow)
+terra::plot(Host_SD_E, main = 'Host', ext = multiWindow)
+terra::plot(IC_SD_E, main = 'IC', ext = multiWindow)
 par(mfrow = c(1,1))
