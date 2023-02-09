@@ -1,4 +1,4 @@
-uncertRuns <- function(case = 'all', years = 1){
+uncertRunsWrite <- function(case = 'all', years = 1){
   if (case == 'all'){
     initial_condition_uncertainty <- TRUE
     host_uncertainty <- TRUE
