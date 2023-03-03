@@ -52,7 +52,7 @@ anthropogenic_kernel_type <- "cauchy"
 natural_dir <- "NONE"
 anthropogenic_dir <- "NONE"
 number_of_iterations <- 2000
-number_of_cores <- 10
+number_of_cores <- 1
 pesticide_duration <- c(0)
 pesticide_efficacy <- 1.0
 random_seed <- NULL
@@ -91,47 +91,47 @@ output_folder_path <- ''
 
 # Sequential Method
 eu1_uncert_outs <- matrix(nrow = 2, ncol = (2 * length(setupList)))
-for(i in length(setupList)){
+for(i in 1:length(setupList)){
   eu1_uncert_outs[,((2*i)-1):(2*i)] <- uncertRunsSobol(setupList[i], 1)
 }
 # End Methods
 
-test_uncert <- rep(0, length(setupList))
-
-for(i in 1:length(setupList)){
-  test_uncert[i] <- eu1_uncert_outs[i*4]
-}
-
-plot_mat <- matrix(0, nrow = 5, ncol = 2)
-plot_mat[1,1] <- test_uncert[2] - test_uncert[5]
-plot_mat[2,1] <- test_uncert[3] - test_uncert[5]
-plot_mat[3,1] <- test_uncert[4] - test_uncert[5]
-plot_mat[4,1] <- test_uncert[5]
-plot_mat[5,1] <- test_uncert[1] - plot_mat[1,1] - plot_mat[2,1] - plot_mat[3,1] - test_uncert[5]
-for(i in 1:5){
-  plot_mat[i,2] <- round(plot_mat[i,1]/test_uncert[1], 4)
-}
-
-plot_df <- data.frame(
-  area = plot_mat[,1],
-  pct = plot_mat[,2],
-  plot = rep('Uncertainty', 5),
-  type = c('Host', 'Initial Conditions', 'Parameter', 'Process', 'Interactions')
-)
-
-
-library(ggplot2)
-barvarpct <- ggplot(data = plot_df, aes(x = plot, y = area, fill = type, label = paste((100 * pct), '%', sep =''))) +
-  geom_bar(stat = 'identity') +
-  scale_fill_brewer(palette = 'Set1') +
-  theme_minimal() +
-  labs(title = 'PoPS Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
-  geom_text(size = 3, position = position_stack(vjust = 0.5))
-
-constbarvarpct <- ggplot(data = plot_df, aes(x = plot, y = pct, fill = type, label = paste((100 * pct), '%', sep =''))) +
-  geom_bar(stat = 'identity') +
-  scale_fill_brewer(palette = 'Set1') +
-  theme_minimal() +
-  labs(title = 'PoPS Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
-  geom_text(size = 3, position = position_stack(vjust = 0.5))
-eTime <- proc.time() - sTime
+# test_uncert <- rep(0, length(setupList))
+# 
+# for(i in 1:length(setupList)){
+#   test_uncert[i] <- eu1_uncert_outs[i*4]
+# }
+# 
+# plot_mat <- matrix(0, nrow = 5, ncol = 2)
+# plot_mat[1,1] <- test_uncert[2] - test_uncert[5]
+# plot_mat[2,1] <- test_uncert[3] - test_uncert[5]
+# plot_mat[3,1] <- test_uncert[4] - test_uncert[5]
+# plot_mat[4,1] <- test_uncert[5]
+# plot_mat[5,1] <- test_uncert[1] - plot_mat[1,1] - plot_mat[2,1] - plot_mat[3,1] - test_uncert[5]
+# for(i in 1:5){
+#   plot_mat[i,2] <- round(plot_mat[i,1]/test_uncert[1], 4)
+# }
+# 
+# plot_df <- data.frame(
+#   area = plot_mat[,1],
+#   pct = plot_mat[,2],
+#   plot = rep('Uncertainty', 5),
+#   type = c('Host', 'Initial Conditions', 'Parameter', 'Process', 'Interactions')
+# )
+# 
+# 
+# library(ggplot2)
+# barvarpct <- ggplot(data = plot_df, aes(x = plot, y = area, fill = type, label = paste((100 * pct), '%', sep =''))) +
+#   geom_bar(stat = 'identity') +
+#   scale_fill_brewer(palette = 'Set1') +
+#   theme_minimal() +
+#   labs(title = 'PoPS Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
+#   geom_text(size = 3, position = position_stack(vjust = 0.5))
+# 
+# constbarvarpct <- ggplot(data = plot_df, aes(x = plot, y = pct, fill = type, label = paste((100 * pct), '%', sep =''))) +
+#   geom_bar(stat = 'identity') +
+#   scale_fill_brewer(palette = 'Set1') +
+#   theme_minimal() +
+#   labs(title = 'PoPS Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
+#   geom_text(size = 3, position = position_stack(vjust = 0.5))
+# eTime <- proc.time() - sTime
