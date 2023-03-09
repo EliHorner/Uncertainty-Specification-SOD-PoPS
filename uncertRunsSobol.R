@@ -75,6 +75,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
     terra::writeRaster(eu1_all$simulation_sd, 'All_SD.tif', overwrite = TRUE)
     out = cbind(eu1_all$number_infecteds, eu1_all$infected_areas)
     colnames(out) <- rep(c('num all', 'area all'), years)
+    rm(eu1_all)
     return(out)
   }
   if (case == 'nohost'){
@@ -153,6 +154,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
     terra::writeRaster(eu1_nohost$simulation_sd, 'NoHost_SD.tif', overwrite = TRUE)
     out = cbind(eu1_nohost$number_infecteds, eu1_nohost$infected_areas)
     colnames(out) <- rep(c('num nohost', 'area nohost'), years)
+    rm(eu1_nohost)
     return(out)
   }
   if (case == 'noic'){
@@ -231,6 +233,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
     terra::writeRaster(eu1_noic$simulation_sd, 'NoIC_SD.tif', overwrite = TRUE)
     out = cbind(eu1_noic$number_infecteds, eu1_noic$infected_areas)
     colnames(out) <- rep(c('num noic', 'area noic'), years)
+    rm(eu1_noic)
     return(out)
   }
   if (case == 'nopar'){
@@ -309,6 +312,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
     terra::writeRaster(eu1_nopar$simulation_sd, 'NoPar_SD.tif', overwrite = TRUE)
     out = cbind(eu1_nopar$number_infecteds, eu1_nopar$infected_areas)
     colnames(out) <- rep(c('num nopar', 'area nopar'), years)
+    rm(eu1_nopar)
     return(out)
   }
   if (case == 'host'){
@@ -387,6 +391,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
     terra::writeRaster(eu1_host$simulation_sd, 'Host_SD.tif', overwrite = TRUE)
     out = cbind(eu1_host$number_infecteds, eu1_host$infected_areas)
     colnames(out) <- rep(c('num host', 'area host'), years)
+    rm(eu1_host)
     return(out)
   }
   if (case == 'ic'){
@@ -465,6 +470,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
     terra::writeRaster(eu1_ic$simulation_sd, 'IC_SD.tif', overwrite = TRUE)
     out = cbind(eu1_ic$number_infecteds, eu1_ic$infected_areas)
     colnames(out) <- rep(c('num ic', 'area ic'), years)
+    rm(eu1_ic)
     return(out)
   }
   if (case == 'par'){
@@ -543,6 +549,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
     terra::writeRaster(eu1_par$simulation_sd, 'Par_SD.tif', overwrite = TRUE)
     out = cbind(eu1_par$number_infecteds, eu1_par$infected_areas)
     colnames(out) <- rep(c('num par', 'area par'), years)
+    rm(eu1_par)
     return(out)
   }
   if (case == 'none'){
@@ -621,6 +628,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
     terra::writeRaster(eu1_none$simulation_sd, 'None_SD.tif', overwrite = TRUE)
     out = cbind(eu1_none$number_infecteds, eu1_none$infected_areas)
     colnames(out) <- rep(c('num none', 'area none'), years)
+    rm(eu1_none)
     return(out)
   }
 }
