@@ -96,6 +96,41 @@ for(i in 1:length(setupList)){
 }
 # End Methods
 
+num_sources <- 3
+
+#Pulls every 4th value(variances)
+out_vals_var <- eu1_uncert_outs[seq(4, length(eu1_uncert_outs), 4)]
+
+out_u_mat <- matrix(0, nrow = num_sources, ncol = length(setupList))
+#Rows = host, ic, par, Cols = Combinations
+out_u_mat[,1] = c(1,1,1)
+out_u_mat[,2] = c(1,0,0)
+out_u_mat[,3] = c(0,1,0)
+out_u_mat[,4] = c(0,0,1)
+out_u_mat[,5] = c(0,1,1)
+out_u_mat[,6] = c(1,0,1)
+out_u_mat[,7] = c(1,1,0)
+
+
+#Create Sobol output table/matrix for whole study area
+sobol_mat <- matrix(0, nrow = 5, ncol = num_sources)
+colnames(sobol_mat) = c('Host', 'IC', 'Par')
+#1: First Order Index
+#2: Total Order Index
+#3: Percent of Total Order as First Order by source
+#4: Percent of first order variance from source
+#5: Percent of first order variance from source
+for(i in 1:num_sources){
+  sobol_mat[1,i] <- sobolFirstOrder(out_vals_var, out_u_mat, i)
+  sobol_mat[2,i] <- sobolTotalOrder(out_vals_var, out_u_mat, i)
+  sobol_mat[3,i] <- sobol_mat[1,i] / sobol_mat[2,i]
+}
+
+sobol_mat[4,] <- sobol_mat[1,] / sum(sobol_mat[1,])
+sobol_mat[5,] <- sobol_mat[2,] / sum(sobol_mat[2,])
+
+#Plotting (to add)
+
 # test_uncert <- rep(0, length(setupList))
 # 
 # for(i in 1:length(setupList)){
