@@ -81,9 +81,7 @@ write_outputs <- "None"
 output_folder_path <- ""
 network_filename <- ""
 network_movement <- "walk"
-use_distance <- FALSE
-use_rmse <- FALSE
-use_mcc <- TRUE
+success_metric <- "mcc and quantity"
 
 sod_2021 <- calibrate(infected_years_file,
                       number_of_observations,
@@ -159,15 +157,13 @@ sod_2021 <- calibrate(infected_years_file,
                       output_folder_path,
                       network_filename,
                       network_movement,
-                      use_distance,
-                      use_rmse,
-                      use_mcc)
+                      success_metric)
 
 
-save(sod_2021, file = "rdata/eu1_2021.RData")
+# save(sod_2021, file = "rdata/eu1_2021.RData")
 
 sod_2021_m <- sod_2021$posterior_means
 sod_2021_cm <- sod_2021$posterior_cov_matrix
 
-write.table(x = sod_2021_m, file = 'parameters/eu1_2021_means.csv', row.names = FALSE, col.names = FALSE)
-write.table(sod_2021_cm, 'parameters/eu1_2021_cov_mat.csv', row.names = FALSE, col.names = FALSE)
+# write.table(x = sod_2021_m, file = 'parameters/eu1_2021_means.csv', row.names = FALSE, col.names = FALSE)
+# write.table(sod_2021_cm, 'parameters/eu1_2021_cov_mat.csv', row.names = FALSE, col.names = FALSE)

@@ -7,7 +7,7 @@ library(doParallel)
 # Change this to the directory that you save the folder to and you will good to go
 setff("In", "C:/Users/cmjone25/Desktop/SOD_OR/")
 
-infected_years_file <- ffIn("Cumulative Infections/cum_inf_2019_eu1.tif")
+infected_years_file <- ffIn("Cumulative Infections/cum_inf_2018_eu1.tif")
 number_of_observations <- 1
 prior_number_of_observations <- 0
 prior_means <- c(0, 0, 0, 0, 0, 0, 0, 0)
@@ -15,11 +15,11 @@ prior_cov_matrix <- matrix(0, 8, 8)
 params_to_estimate <- c(T, T, T, T, F, F)
 number_of_generations <- 7
 generation_size <- 1000
-infected_file <- ffIn("End of Year Infections/end_inf_2018_eu1.tif")
-host_file <- ffIn("Hosts/hosts_2019.tif")
+infected_file <- ffIn("End of Year Infections/end_inf_2017_eu1.tif")
+host_file <- ffIn("Hosts/hosts_2018.tif")
 total_populations_file <- ffIn("Hosts/lemma_max100m.tif")
 temp <- TRUE
-temperature_coefficient_file <- ffIn("Weather/weather_coef_2019.tif")
+temperature_coefficient_file <- ffIn("Weather/weather_coef_2018.tif")
 precip <- FALSE
 precipitation_coefficient_file <- ""
 model_type <- "SI"
@@ -54,7 +54,7 @@ anthropogenic_dir <- "NONE"
 anthropogenic_kappa <- 0
 pesticide_duration <- c(0)
 pesticide_efficacy <- 1.0
-mask <- NULL
+mask <- ffIn("mask.tif")
 output_frequency <- "year"
 output_frequency_n <- 1
 movements_file <- ""
@@ -82,7 +82,8 @@ output_folder_path <- ""
 network_filename <- ""
 network_movement <- "walk"
 success_metric <- "mcc and quantity"
-sod_2019 <- calibrate(infected_years_file,
+
+sod_2018 <- calibrate(infected_years_file,
                       number_of_observations,
                       prior_number_of_observations,
                       prior_means,
@@ -159,10 +160,10 @@ sod_2019 <- calibrate(infected_years_file,
                       success_metric)
 
 
-save(sod_2019, file = "rdata/eu1_2019.RData")
+# save(sod_2018, file = "sod_2018.RData")
 
-sod_2019_m <- sod_2019$posterior_means
-sod_2019_cm <- sod_2019$posterior_cov_matrix
-
-write.table(x = sod_2019_m, file = 'parameters/eu1_2019_means.csv', row.names = FALSE, col.names = FALSE)
-write.table(sod_2019_cm, 'parameters/eu1_2019_cov_mat.csv', row.names = FALSE, col.names = FALSE)
+# sod_2018_m <- sod_2018$posterior_means
+# sod_2018_cm <- sod_2018$posterior_cov_matrix
+# 
+# write.table(x = sod_2018_m, file = 'parameters/eu1_2018_means.csv', row.names = FALSE, col.names = FALSE)
+# write.table(sod_2018_cm, 'parameters/eu1_2018_cov_mat.csv', row.names = FALSE, col.names = FALSE)

@@ -7,7 +7,7 @@ library(doParallel)
 # Change this to the directory that you save the folder to and you will good to go
 setff("In", "C:/Users/cmjone25/Desktop/SOD_OR/")
 
-infected_years_file <- ffIn("Cumulative Infections/cum_inf_2019_eu1.tif")
+infected_years_file <- ffIn("Cumulative Infections/cum_inf_2020_na1.tif")
 number_of_observations <- 1
 prior_number_of_observations <- 0
 prior_means <- c(0, 0, 0, 0, 0, 0, 0, 0)
@@ -15,11 +15,11 @@ prior_cov_matrix <- matrix(0, 8, 8)
 params_to_estimate <- c(T, T, T, T, F, F)
 number_of_generations <- 7
 generation_size <- 1000
-infected_file <- ffIn("End of Year Infections/end_inf_2018_eu1.tif")
-host_file <- ffIn("Hosts/hosts_2019.tif")
+infected_file <- ffIn("End of Year Infections/end_inf_2019_na1.tif")
+host_file <- ffIn("Hosts/hosts_2020.tif")
 total_populations_file <- ffIn("Hosts/lemma_max100m.tif")
 temp <- TRUE
-temperature_coefficient_file <- ffIn("Weather/weather_coef_2019.tif")
+temperature_coefficient_file <- ffIn("Weather/weather_coef_2020.tif")
 precip <- FALSE
 precipitation_coefficient_file <- ""
 model_type <- "SI"
@@ -81,8 +81,9 @@ write_outputs <- "None"
 output_folder_path <- ""
 network_filename <- ""
 network_movement <- "walk"
-success_metric <- "mcc and quantity"
-sod_2019 <- calibrate(infected_years_file,
+success_metric <- "mcc and RMSE"
+
+sod_2020 <- calibrate(infected_years_file,
                       number_of_observations,
                       prior_number_of_observations,
                       prior_means,
@@ -159,10 +160,10 @@ sod_2019 <- calibrate(infected_years_file,
                       success_metric)
 
 
-save(sod_2019, file = "rdata/eu1_2019.RData")
+save(sod_2020, file = "rdata/na1_2020.RData")
 
-sod_2019_m <- sod_2019$posterior_means
-sod_2019_cm <- sod_2019$posterior_cov_matrix
+sod_2020_m <- sod_2020$posterior_means
+sod_2020_cm <- sod_2020$posterior_cov_matrix
 
-write.table(x = sod_2019_m, file = 'parameters/eu1_2019_means.csv', row.names = FALSE, col.names = FALSE)
-write.table(sod_2019_cm, 'parameters/eu1_2019_cov_mat.csv', row.names = FALSE, col.names = FALSE)
+write.table(x = sod_2020_m, file = 'parameters/na1_2020_means.csv', row.names = FALSE, col.names = FALSE)
+write.table(sod_2020_cm, 'parameters/na1_2020_cov_mat.csv', row.names = FALSE, col.names = FALSE)
