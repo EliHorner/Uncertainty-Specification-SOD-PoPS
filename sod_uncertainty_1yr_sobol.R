@@ -112,14 +112,14 @@ out_u_mat[,6] = c(1,0,1)
 out_u_mat[,7] = c(1,1,0)
 
 
-#Create Sobol output table/matrix for whole study area
+# Create Sobol output table/matrix for whole study area
 sobol_mat <- matrix(0, nrow = 5, ncol = num_sources)
 colnames(sobol_mat) = c('Host', 'IC', 'Par')
 #1: First Order Index
 #2: Total Order Index
 #3: Percent of Total Order as First Order by source
 #4: Percent of first order variance from source
-#5: Percent of first order variance from source
+#5: Percent of total order variance from source
 for(i in 1:num_sources){
   sobol_mat[1,i] <- sobolFirstOrder(out_vals_var, out_u_mat, i)
   sobol_mat[2,i] <- sobolTotalOrder(out_vals_var, out_u_mat, i)
@@ -129,7 +129,52 @@ for(i in 1:num_sources){
 sobol_mat[4,] <- sobol_mat[1,] / sum(sobol_mat[1,])
 sobol_mat[5,] <- sobol_mat[2,] / sum(sobol_mat[2,])
 
+barplot(sobol_mat[2,], col = pal2, main = 'Sobol Method', ylab = 'Sobol Index')
+barplot(sobol_mat[1,], col = pal, add = TRUE)
+
+
+# Create Sobol index output rasters
+# [[x]] indexes raster stacks
+
+out_vals_rasts_var <- c(rast('All_SD.tif')^2, rast('Host_SD.tif')^2, rast('IC_SD.tif')^2, rast('Par_SD.tif')^2, rast('NoHost_SD.tif')^2, rast('NoIC_SD.tif')^2, rast('NoPar_SD.tif')^2, rast('None_SD.tif')^2)
+
+for(i in 1:num_sources){
+  writeRaster(sobolFirstOrderRast(out_vals_rasts_var, out_u_mat, i), paste('SobolFirstOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+}
+
+sfoHost <- rast('SobolFirstOrderhost.tif')
+sfoIC <- rast('SobolFirstOrderic.tif')
+sfoPar <- rast('SobolFirstOrderpar.tif')
+
+sfoTotal <- sfoHost + sfoIC + sfoPar
+
+plot(sfoIC / sfoTotal, ext = multiWindow, col = testpal, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0000001, 10))
+
+
+sobolTotalOrderRast <- function(rastersList, uMat, uSource){
+  sortMat <- uMat[-uSource,]
+  r <- rast(nrow = 1073, ncol = 686, ext = ext(sfoTotal), crs = crs(sfoTotal))
+  varRastlist <- c(rep(r, ncol(unique(sortMat, MARGIN = 2))))
+  for(i in 1:ncol(unique(sortMat, MARGIN = 2))){
+    varRastlist[[i]] <- stdev(rastersList[[apply(sortMat, 2, identical, unique(sortMat, MARGIN = 2)[,i])]])^2
+  }
+  numerator <- mean(varRastlist)
+  return(numerator/ (stdev(rastersList)^2))
+}
+
+for(i in 1:num_sources){
+  writeRaster(sobolTotalOrderRast(out_vals_rasts_var, out_u_mat, i), paste('SobolTotalOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+}
+
+stoHost <- rast('SobolTotalOrderhost.tif')
+stoIC <- rast('SobolTotalOrderic.tif')
+stoPar <- rast('SobolTotalOrderpar.tif')
+
+stoTotal <- stoHost + stoIC + stoPar
+
 #Plotting (to add)
+
+testpal <- c('#8B0000', "#FFFFD9", "#E0F3B2", "#97D6B8", "#41B6C4", "#1E80B8", "#24429A", "#081D58", "#702963")
 
 # test_uncert <- rep(0, length(setupList))
 # 

@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.2.1",
+    "Version": "4.1.1",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -43,9 +43,9 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "rpops",
       "RemoteUsername": "ncsu-landscape-dynamics",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "3d277292578065f770af8073482c371b2d337f2b",
-      "Hash": "b77223203bdccd2bb86b8fbf8a7727bc",
+      "RemoteRef": "update-packages",
+      "RemoteSha": "3ef1b43b0a7c4013b015eafcf44d83c1857406d5",
+      "Hash": "010e2e47d2b26910dda302c9d0eeea5d",
       "Requirements": [
         "MASS",
         "Metrics",
@@ -243,20 +243,22 @@
     },
     "ggplot2": {
       "Package": "ggplot2",
-      "Version": "3.3.6",
+      "Version": "3.4.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0fb26d0674c82705c6b701d1a61e02ea",
+      "Hash": "fd2aab12f54400c6bca43687231e246b",
       "Requirements": [
         "MASS",
-        "digest",
+        "cli",
         "glue",
         "gtable",
         "isoband",
+        "lifecycle",
         "mgcv",
         "rlang",
         "scales",
         "tibble",
+        "vctrs",
         "withr"
       ]
     },
