@@ -98,8 +98,8 @@ for(i in 1:length(setupList)){
 
 num_sources <- 3
 
-#Pulls every 4th value(variances)
-out_vals_var <- eu1_uncert_outs[seq(4, length(eu1_uncert_outs), 4)]
+#Pulls every 4th value(area infected (to anlyze variance in these values))
+out_vals_area <- eu1_uncert_outs[seq(4, length(eu1_uncert_outs), 4)]
 
 out_u_mat <- matrix(0, nrow = num_sources, ncol = length(setupList))
 #Rows = host, ic, par, Cols = Combinations
@@ -121,8 +121,8 @@ colnames(sobol_mat) = c('Host', 'IC', 'Par')
 #4: Percent of first order variance from source
 #5: Percent of total order variance from source
 for(i in 1:num_sources){
-  sobol_mat[1,i] <- sobolFirstOrder(out_vals_var, out_u_mat, i)
-  sobol_mat[2,i] <- sobolTotalOrder(out_vals_var, out_u_mat, i)
+  sobol_mat[1,i] <- sobolFirstOrder(out_vals_area, out_u_mat, i)
+  sobol_mat[2,i] <- sobolTotalOrder(out_vals_area, out_u_mat, i)
   sobol_mat[3,i] <- sobol_mat[1,i] / sobol_mat[2,i]
 }
 
@@ -137,9 +137,10 @@ barplot(sobol_mat[1,], col = pal, add = TRUE)
 # [[x]] indexes raster stacks
 
 out_vals_rasts_var <- c(rast('All_SD.tif')^2, rast('Host_SD.tif')^2, rast('IC_SD.tif')^2, rast('Par_SD.tif')^2, rast('NoHost_SD.tif')^2, rast('NoIC_SD.tif')^2, rast('NoPar_SD.tif')^2, rast('None_SD.tif')^2)
+out_vals_rasts <- c(rast('All_Mean.tif'), rast('Host_Mean.tif'), rast('IC_Mean.tif'), rast('Par_Mean.tif'), rast('NoHost_Mean.tif'), rast('NoIC_Mean.tif'), rast('NoPar_Mean.tif'), rast('None_Mean.tif'))
 
 for(i in 1:num_sources){
-  writeRaster(sobolFirstOrderRast(out_vals_rasts_var, out_u_mat, i), paste('SobolFirstOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+  writeRaster(sobolFirstOrderRast(out_vals_rasts, out_u_mat, i), paste('SobolFirstOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
 }
 
 sfoHost <- rast('SobolFirstOrderhost.tif')
@@ -163,7 +164,7 @@ sobolTotalOrderRast <- function(rastersList, uMat, uSource){
 }
 
 for(i in 1:num_sources){
-  writeRaster(sobolTotalOrderRast(out_vals_rasts_var, out_u_mat, i), paste('SobolTotalOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+  writeRaster(sobolTotalOrderRast(out_vals_rasts, out_u_mat, i), paste('SobolTotalOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
 }
 
 stoHost <- rast('SobolTotalOrderhost.tif')
