@@ -212,3 +212,25 @@ plot(sodPoints, ext = multiWindow, col = 'black', add = TRUE)
 plot(sfoIC, ext = multiWindow, main = 'Initial Condition Sobol First Order Index', col = pal)
 plot(sodPoints, ext = multiWindow, col = 'black', add = TRUE)
 par(mfrow = c(1,1))
+
+dev.new(width = 700, height = 2400, unit = 'px')
+library(RColorBrewer)
+num_cols <- 6
+mypal <- colorRampPalette(brewer.pal(9, 'YlGn'))(num_cols)
+terra::plot(all327, col = mypal, mar = c(2.1,2.1,2.1,7.1), main = 'Predicted SOD infections (one year horizon)', breaks = c(0, 0.5, 1, 1.5, 2, 3, 8), xaxt = 'n', yaxt = 'n')
+
+dev.new(width = 700, height = 2400, unit = 'px')
+library(RColorBrewer)
+num_cols <- 20
+mypal <- colorRampPalette(brewer.pal(9, 'Reds'))(num_cols)
+terra::plot(allvar327, col = mypal, mar = c(2.1,2.1,2.1,7.1), main = 'Variance (uncertainty) in SOD infection predictions (one year horizon)', xaxt = 'n', yaxt = 'n')
+
+
+sim_parts <- c(`Process` = 59, `Parameter` = 25, `Host` = 4, `Initial Condition` = 9, `Interactions` = 3)
+sob_parts <- c(`Process + Parameter` = 93, `Host` = 6, `Initial Condition` = 1)
+waffle::waffle(parts = sim_df$values, rows = 5, colors = brewer.pal(5, 'Set1'), title = 'Uncertainty Partitioning', legend_pos = 'bottom')
+
+waffle::waffle(parts = sim_parts, rows = 5, colors = c('#fe7f2d', '#fcca46', '#233d4d', '#619b8a', '#a1c181'), title = 'Uncertainty Partitioning: Simulation/Dietze Method', legend_pos = 'bottom')
+waffle::waffle(parts = sob_parts, rows = 5, colors = c('#fe7f2d', '#233d4d', '#619b8a'), title = 'Uncertainty Partitioning: Sobol Method', legend_pos = 'bottom')
+
+waffle::waffle(parts = sim_parts, rows = 5, colors = c('#1d6d8b', '#84a9a1', '#f4deb3', '#e96e3a', '#eea56c'), title = 'Uncertainty Partitioning: Dietze/Simulation Method', legend_pos = 'bottom')
