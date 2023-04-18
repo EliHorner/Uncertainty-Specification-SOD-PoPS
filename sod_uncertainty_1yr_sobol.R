@@ -99,7 +99,7 @@ for(i in 1:length(setupList)){
 num_sources <- 3
 
 #Pulls every 4th value(area infected (to anlyze variance in these values))
-out_vals_area <- eu1_uncert_outs[seq(4, length(eu1_uncert_outs), 4)]
+out_vals_var <- eu1_uncert_outs[seq(4, length(eu1_uncert_outs), 4)]
 
 out_u_mat <- matrix(0, nrow = num_sources, ncol = length(setupList))
 #Rows = host, ic, par, Cols = Combinations
@@ -121,8 +121,8 @@ colnames(sobol_mat) = c('Host', 'IC', 'Par')
 #4: Percent of first order variance from source
 #5: Percent of total order variance from source
 for(i in 1:num_sources){
-  sobol_mat[1,i] <- sobolFirstOrder(out_vals_area, out_u_mat, i)
-  sobol_mat[2,i] <- sobolTotalOrder(out_vals_area, out_u_mat, i)
+  sobol_mat[1,i] <- sobolFirstOrder(out_vals_var, out_u_mat, i)
+  sobol_mat[2,i] <- sobolTotalOrder(out_vals_var, out_u_mat, i)
   sobol_mat[3,i] <- sobol_mat[1,i] / sobol_mat[2,i]
 }
 
