@@ -249,7 +249,8 @@ plot(tallmean, ext = multiWindow, main = 'Mean Predicted Infections', col = pale
 plot(tallsd, ext = multiWindow, main = 'Variance in Predicted Infections (Uncertainty)', col = palexv)
 par(mfrow = c(1,1))
 
-plot(which.max(c(stoHost0.03, stoIC0.03, stoPar0.03)), ext = multiWindow, col = c('#f4f1bb', '#ed6a5a', '#6fb7c9'))
+
+plot(which.max(c(stoHost, stoIC, stoPar)), ext = multiWindow, col = c('#f4f1bb', '#ed6a5a', '#6fb7c9'), alpha = alphaRast)
 
 
 dev.new(width = 700, height = 2400, unit = 'px')
