@@ -165,7 +165,7 @@ sobolTotalOrderRast <- function(rastersList, uMat, uSource){
 }
 
 for(i in 1:num_sources){
-  writeRaster(sobolTotalOrderRast(out_vals_rasts_prob, out_u_mat, i), paste('SobolTotalOrderP', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+  writeRaster(sobolTotalOrderRast(out_vals_rasts_var, out_u_mat, i), paste('SobolTotalOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
 }
 
 stoHost <- rast('SobolTotalOrderhost.tif')
