@@ -138,9 +138,10 @@ barplot(sobol_mat[1,], col = pal, add = TRUE)
 
 out_vals_rasts_var <- c(rast('All_SD.tif')^2, rast('Host_SD.tif')^2, rast('IC_SD.tif')^2, rast('Par_SD.tif')^2, rast('NoHost_SD.tif')^2, rast('NoIC_SD.tif')^2, rast('NoPar_SD.tif')^2, rast('None_SD.tif')^2)
 out_vals_rasts <- c(rast('All_Mean.tif'), rast('Host_Mean.tif'), rast('IC_Mean.tif'), rast('Par_Mean.tif'), rast('NoHost_Mean.tif'), rast('NoIC_Mean.tif'), rast('NoPar_Mean.tif'), rast('None_Mean.tif'))
+out_vals_rasts_prob <- c(rast('AllP.tif'), rast('HostP.tif'), rast('ICP.tif'), rast('ParP.tif'), rast('NoHostP.tif'), rast('NoICP.tif'), rast('NoParP.tif'), rast('NoneP.tif'))
 
 for(i in 1:num_sources){
-  writeRaster(sobolFirstOrderRast(out_vals_rasts, out_u_mat, i), paste('SobolFirstOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+  writeRaster(sobolFirstOrderRast(out_vals_rasts_var, out_u_mat, i), paste('SobolFirstOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
 }
 
 sfoHost <- rast('SobolFirstOrderhost.tif')
@@ -164,7 +165,7 @@ sobolTotalOrderRast <- function(rastersList, uMat, uSource){
 }
 
 for(i in 1:num_sources){
-  writeRaster(sobolTotalOrderRast(out_vals_rasts, out_u_mat, i), paste('SobolTotalOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+  writeRaster(sobolTotalOrderRast(out_vals_rasts_var, out_u_mat, i), paste('SobolTotalOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
 }
 
 stoHost <- rast('SobolTotalOrderhost.tif')
