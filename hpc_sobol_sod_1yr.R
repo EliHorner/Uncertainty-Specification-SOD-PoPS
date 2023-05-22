@@ -6,86 +6,14 @@ library(folderfun)
 library(doParallel)
 # library(plyr)
 
-sTime <- proc.time()
-
-setff("In", "H:/Shared drives/Data/Raster/Regional/SOD_OR/")
-
-setupList <- c('all', 'host', 'ic', 'par', 'nohost', 'noic', 'nopar', 'none')
-
-infected_file <- ffIn("End of Year Infections/new_method_mean_sd_end_inf_2021_eu1.tif")
-host_file <- ffIn("Hosts/mean_sd_hosts_sum.tif")
-total_populations_file <- ffIn("Hosts/lemma_max100m.tif")
-means <- read.table('parameters/eu1_2019_means.csv', header = F)
-parameter_means <- t(means)
-parameter_means <- parameter_means[1,]
-parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
-temp <- TRUE
-temperature_coefficient_file <- ffIn("Weather/weather_coef_2021.tif")
-precip <- FALSE
-precipitation_coefficient_file <- ""
-model_type <- "SI"
-latency_period <- 0
-time_step <- "week"
-season_month_start <- 1
-season_month_end <- 12
-start_date <- '2022-01-01'
-end_date <- '2022-12-31'
-use_survival_rates <- FALSE
-survival_rate_month <- 3
-survival_rate_day <- 15
-survival_rates_file <- ""
-use_lethal_temperature <- FALSE
-temperature_file <- ''
-lethal_temperature <- -15
-lethal_temperature_month <- 1
-mortality_on <- FALSE
-mortality_rate <- 0
-mortality_time_lag <- 0
-mortality_frequency = "year"
-mortality_frequency_n = 1
-management <- FALSE
-treatment_dates <- c('2020-12-24')
-treatments_file <- ""
-treatment_method <- "ratio"
-natural_kernel_type <- "cauchy"
-anthropogenic_kernel_type <- "cauchy"
-natural_dir <- "NONE"
-anthropogenic_dir <- "NONE"
-number_of_iterations <- 2000
-number_of_cores <- 1
-pesticide_duration <- c(0)
-pesticide_efficacy <- 1.0
-random_seed <- NULL
-output_frequency <- "year"
-output_frequency_n <- 1
-movements_file <- ""
-use_movements <- FALSE
-start_exposed <- FALSE
-generate_stochasticity <- TRUE
-establishment_stochasticity <- TRUE
-movement_stochasticity <- TRUE
-dispersal_stochasticity <- TRUE
-establishment_probability <- 0.5
-dispersal_percentage <- 0.99
-quarantine_areas_file <- ""
-use_quarantine <- FALSE
-use_spreadrates <- FALSE
-use_overpopulation_movements <- FALSE
-overpopulation_percentage <- 0.75
-leaving_percentage <- .50
-leaving_scale_coefficient <- 5
-exposed_file <- ""
-mask <- NULL
-write_outputs <- "None"
-network_filename <- ""
-network_movement <- "walk"
-output_folder_path <- ''
+setff("In", "/usr/local/usrapps/rkmeente/eahorner/sod_inputs")
+setff("Out", "/usr/local/usrapps/rkmeente/eahorner/outputs")
 
 uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'all'){
     initial_condition_uncertainty <- TRUE
     host_uncertainty <- TRUE
-    parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
     eu1_all <- PoPS::pops_multirun(infected_file,
                                    host_file,
                                    total_populations_file,
@@ -154,8 +82,8 @@ uncertRunsSobol <- function(case = 'all', years = 1){
                                    network_movement,
                                    initial_condition_uncertainty,
                                    host_uncertainty)
-    terra::writeRaster(eu1_all$simulation_mean, 'All_Mean.tif', overwrite = TRUE)
-    terra::writeRaster(eu1_all$simulation_sd, 'All_SD.tif', overwrite = TRUE)
+    terra::writeRaster(eu1_all$simulation_mean, ffOut('Rasters/All_Mean.tif'), overwrite = TRUE)
+    terra::writeRaster(eu1_all$simulation_sd, ffOut('Rasters/All_SD.tif'), overwrite = TRUE)
     out = cbind(eu1_all$number_infecteds, eu1_all$infected_areas)
     colnames(out) <- rep(c('num all', 'area all'), years)
     rm(eu1_all)
@@ -164,7 +92,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'nohost'){
     initial_condition_uncertainty <- TRUE
     host_uncertainty <- FALSE
-    parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
     eu1_nohost <- PoPS::pops_multirun(infected_file,
                                       host_file,
                                       total_populations_file,
@@ -233,8 +161,8 @@ uncertRunsSobol <- function(case = 'all', years = 1){
                                       network_movement,
                                       initial_condition_uncertainty,
                                       host_uncertainty)
-    terra::writeRaster(eu1_nohost$simulation_mean, 'NoHost_Mean.tif', overwrite = TRUE)
-    terra::writeRaster(eu1_nohost$simulation_sd, 'NoHost_SD.tif', overwrite = TRUE)
+    terra::writeRaster(eu1_nohost$simulation_mean, ffOut('Rasters/NoHost_Mean.tif'), overwrite = TRUE)
+    terra::writeRaster(eu1_nohost$simulation_sd, ffOut('Rasters/NoHost_SD.tif'), overwrite = TRUE)
     out = cbind(eu1_nohost$number_infecteds, eu1_nohost$infected_areas)
     colnames(out) <- rep(c('num nohost', 'area nohost'), years)
     rm(eu1_nohost)
@@ -243,7 +171,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'noic'){
     initial_condition_uncertainty <- FALSE
     host_uncertainty <- TRUE
-    parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
     eu1_noic <- PoPS::pops_multirun(infected_file,
                                     host_file,
                                     total_populations_file,
@@ -312,8 +240,8 @@ uncertRunsSobol <- function(case = 'all', years = 1){
                                     network_movement,
                                     initial_condition_uncertainty,
                                     host_uncertainty)
-    terra::writeRaster(eu1_noic$simulation_mean, 'NoIC_Mean.tif', overwrite = TRUE)
-    terra::writeRaster(eu1_noic$simulation_sd, 'NoIC_SD.tif', overwrite = TRUE)
+    terra::writeRaster(eu1_noic$simulation_mean, ffOut('Rasters/NoIC_Mean.tif'), overwrite = TRUE)
+    terra::writeRaster(eu1_noic$simulation_sd, ffOut('Rasters/NoIC_SD.tif'), overwrite = TRUE)
     out = cbind(eu1_noic$number_infecteds, eu1_noic$infected_areas)
     colnames(out) <- rep(c('num noic', 'area noic'), years)
     rm(eu1_noic)
@@ -391,8 +319,8 @@ uncertRunsSobol <- function(case = 'all', years = 1){
                                      network_movement,
                                      initial_condition_uncertainty,
                                      host_uncertainty)
-    terra::writeRaster(eu1_nopar$simulation_mean, 'NoPar_Mean.tif', overwrite = TRUE)
-    terra::writeRaster(eu1_nopar$simulation_sd, 'NoPar_SD.tif', overwrite = TRUE)
+    terra::writeRaster(eu1_nopar$simulation_mean, ffOut('Rasters/NoPar_Mean.tif'), overwrite = TRUE)
+    terra::writeRaster(eu1_nopar$simulation_sd, ffOut('Rasters/NoPar_SD.tif'), overwrite = TRUE)
     out = cbind(eu1_nopar$number_infecteds, eu1_nopar$infected_areas)
     colnames(out) <- rep(c('num nopar', 'area nopar'), years)
     rm(eu1_nopar)
@@ -470,8 +398,8 @@ uncertRunsSobol <- function(case = 'all', years = 1){
                                     network_movement,
                                     initial_condition_uncertainty,
                                     host_uncertainty)
-    terra::writeRaster(eu1_host$simulation_mean, 'Host_Mean.tif', overwrite = TRUE)
-    terra::writeRaster(eu1_host$simulation_sd, 'Host_SD.tif', overwrite = TRUE)
+    terra::writeRaster(eu1_host$simulation_mean, ffOut('Rasters/Host_Mean.tif'), overwrite = TRUE)
+    terra::writeRaster(eu1_host$simulation_sd, ffOut('Rasters/Host_SD.tif'), overwrite = TRUE)
     out = cbind(eu1_host$number_infecteds, eu1_host$infected_areas)
     colnames(out) <- rep(c('num host', 'area host'), years)
     rm(eu1_host)
@@ -549,8 +477,8 @@ uncertRunsSobol <- function(case = 'all', years = 1){
                                   network_movement,
                                   initial_condition_uncertainty,
                                   host_uncertainty)
-    terra::writeRaster(eu1_ic$simulation_mean, 'IC_Mean.tif', overwrite = TRUE)
-    terra::writeRaster(eu1_ic$simulation_sd, 'IC_SD.tif', overwrite = TRUE)
+    terra::writeRaster(eu1_ic$simulation_mean, ffOut('Rasters/IC_Mean.tif'), overwrite = TRUE)
+    terra::writeRaster(eu1_ic$simulation_sd, ffOut('Rasters/IC_SD.tif'), overwrite = TRUE)
     out = cbind(eu1_ic$number_infecteds, eu1_ic$infected_areas)
     colnames(out) <- rep(c('num ic', 'area ic'), years)
     rm(eu1_ic)
@@ -559,7 +487,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'par'){
     initial_condition_uncertainty <- FALSE
     host_uncertainty <- FALSE
-    parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
     eu1_par <- PoPS::pops_multirun(infected_file,
                                    host_file,
                                    total_populations_file,
@@ -628,8 +556,8 @@ uncertRunsSobol <- function(case = 'all', years = 1){
                                    network_movement,
                                    initial_condition_uncertainty,
                                    host_uncertainty)
-    terra::writeRaster(eu1_par$simulation_mean, 'Par_Mean.tif', overwrite = TRUE)
-    terra::writeRaster(eu1_par$simulation_sd, 'Par_SD.tif', overwrite = TRUE)
+    terra::writeRaster(eu1_par$simulation_mean, ffOut('Rasters/Par_Mean.tif'), overwrite = TRUE)
+    terra::writeRaster(eu1_par$simulation_sd, ffOut('Rasters/Par_SD.tif'), overwrite = TRUE)
     out = cbind(eu1_par$number_infecteds, eu1_par$infected_areas)
     colnames(out) <- rep(c('num par', 'area par'), years)
     rm(eu1_par)
@@ -707,8 +635,8 @@ uncertRunsSobol <- function(case = 'all', years = 1){
                                     network_movement,
                                     initial_condition_uncertainty,
                                     host_uncertainty)
-    terra::writeRaster(eu1_none$simulation_mean, 'None_Mean.tif', overwrite = TRUE)
-    terra::writeRaster(eu1_none$simulation_sd, 'None_SD.tif', overwrite = TRUE)
+    terra::writeRaster(eu1_none$simulation_mean, ffOut('Rasters/None_Mean.tif'), overwrite = TRUE)
+    terra::writeRaster(eu1_none$simulation_sd, ffOut('Rasters/None_SD.tif'), overwrite = TRUE)
     out = cbind(eu1_none$number_infecteds, eu1_none$infected_areas)
     colnames(out) <- rep(c('num none', 'area none'), years)
     rm(eu1_none)
@@ -751,6 +679,77 @@ sobolTotalOrderRast <- function(rastersList, uMat, uSource){
   numerator <- mean(varRastlist)
   return(numerator/ (stdev(RastersList)^2))
 }
+
+setupList <- c('all', 'host', 'ic', 'par', 'nohost', 'noic', 'nopar', 'none')
+
+infected_file <- ffIn("sod_inputs/EOYInfections/new_method_mean_sd_end_inf_2021_eu1.tif")
+host_file <- ffIn("sod_inputs/Hosts/mean_sd_hosts_sum.tif")
+total_populations_file <- ffIn("sod_inputs/Hosts/lemma_max100m.tif")
+means <- read.table('sod_inputs/parameters/eu1_2019_means.csv', header = F)
+parameter_means <- t(means)
+parameter_means <- parameter_means[1,]
+parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+temp <- TRUE
+temperature_coefficient_file <- ffIn("sod_inputs/Weather/weather_coef_2021.tif")
+precip <- FALSE
+precipitation_coefficient_file <- ""
+model_type <- "SI"
+latency_period <- 0
+time_step <- "week"
+season_month_start <- 1
+season_month_end <- 12
+start_date <- '2022-01-01'
+end_date <- '2022-12-31'
+use_survival_rates <- FALSE
+survival_rate_month <- 3
+survival_rate_day <- 15
+survival_rates_file <- ""
+use_lethal_temperature <- FALSE
+temperature_file <- ''
+lethal_temperature <- -15
+lethal_temperature_month <- 1
+mortality_on <- FALSE
+mortality_rate <- 0
+mortality_time_lag <- 0
+mortality_frequency = "year"
+mortality_frequency_n = 1
+management <- FALSE
+treatment_dates <- c('2020-12-24')
+treatments_file <- ""
+treatment_method <- "ratio"
+natural_kernel_type <- "cauchy"
+anthropogenic_kernel_type <- "cauchy"
+natural_dir <- "NONE"
+anthropogenic_dir <- "NONE"
+number_of_iterations <- 2000
+number_of_cores <- 1
+pesticide_duration <- c(0)
+pesticide_efficacy <- 1.0
+random_seed <- NULL
+output_frequency <- "year"
+output_frequency_n <- 1
+movements_file <- ""
+use_movements <- FALSE
+start_exposed <- FALSE
+generate_stochasticity <- TRUE
+establishment_stochasticity <- TRUE
+movement_stochasticity <- TRUE
+dispersal_stochasticity <- TRUE
+establishment_probability <- 0.5
+dispersal_percentage <- 0.99
+quarantine_areas_file <- ""
+use_quarantine <- FALSE
+use_spreadrates <- FALSE
+use_overpopulation_movements <- FALSE
+overpopulation_percentage <- 0.75
+leaving_percentage <- .50
+leaving_scale_coefficient <- 5
+exposed_file <- ""
+mask <- NULL
+write_outputs <- "None"
+network_filename <- ""
+network_movement <- "walk"
+output_folder_path <- ''
 
 # Parallel Method
 # registerDoParallel(length(setupList))
@@ -800,27 +799,28 @@ for(i in 1:num_sources){
 sobol_mat[4,] <- sobol_mat[1,] / sum(sobol_mat[1,])
 sobol_mat[5,] <- sobol_mat[2,] / sum(sobol_mat[2,])
 
-#barplot(sobol_mat[2,], col = pal2, main = 'Sobol Method', ylab = 'Sobol Index')
-#barplot(sobol_mat[1,], col = pal, add = TRUE)
+barplot(sobol_mat[2,], col = pal2, main = 'Sobol Method', ylab = 'Sobol Index')
+barplot(sobol_mat[1,], col = pal, add = TRUE)
 
 
 # Create Sobol index output rasters
 # [[x]] indexes raster stacks
 
-out_vals_rasts_var <- c(rast('All_SD.tif')^2, rast('Host_SD.tif')^2, rast('IC_SD.tif')^2, rast('Par_SD.tif')^2, rast('NoHost_SD.tif')^2, rast('NoIC_SD.tif')^2, rast('NoPar_SD.tif')^2, rast('None_SD.tif')^2)
+out_vals_rasts_var <- c(rast(ffOut('Rasters/All_SD.tif'))^2, rast(ffOut('Rasters/Host_SD.tif'))^2, rast(ffOut('Rasters/IC_SD.tif'))^2, rast(ffOut('Rasters/Par_SD.tif'))^2, rast(ffOut('Rasters/NoHost_SD.tif'))^2, rast(ffOut('Rasters/NoIC_SD.tif'))^2, rast(ffOut('Rasters/NoPar_SD.tif'))^2, rast(ffOut('Rasters/None_SD.tif'))^2)
 out_vals_rasts <- c(rast('All_Mean.tif'), rast('Host_Mean.tif'), rast('IC_Mean.tif'), rast('Par_Mean.tif'), rast('NoHost_Mean.tif'), rast('NoIC_Mean.tif'), rast('NoPar_Mean.tif'), rast('None_Mean.tif'))
+out_vals_rasts_prob <- c(rast('AllP.tif'), rast('HostP.tif'), rast('ICP.tif'), rast('ParP.tif'), rast('NoHostP.tif'), rast('NoICP.tif'), rast('NoParP.tif'), rast('NoneP.tif'))
 
 for(i in 1:num_sources){
-  writeRaster(sobolFirstOrderRast(out_vals_rasts, out_u_mat, i), paste('SobolFirstOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+  writeRaster(sobolFirstOrderRast(out_vals_rasts_var, out_u_mat, i), ffOut(paste('SobolOuts/SobolFirstOrder', setupList[i+1],'.tif', sep ='')), overwrite = TRUE)
 }
 
-sfoHost <- rast('SobolFirstOrderhost.tif')
-sfoIC <- rast('SobolFirstOrderic.tif')
-sfoPar <- rast('SobolFirstOrderpar.tif')
+sfoHost <- rast(ffOut('SobolOuts/SobolFirstOrderhost.tif'))
+sfoIC <- rast(ffOut('SobolOuts/SobolFirstOrderic.tif'))
+sfoPar <- rast(ffOut('SobolOuts/SobolFirstOrderpar.tif'))
 
 sfoTotal <- sfoHost + sfoIC + sfoPar
 
-#plot(sfoIC / sfoTotal, ext = multiWindow, col = testpal, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0000001, 10))
+plot(sfoIC / sfoTotal, ext = multiWindow, col = testpal, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0000001, 10))
 
 
 sobolTotalOrderRast <- function(rastersList, uMat, uSource){
@@ -835,11 +835,55 @@ sobolTotalOrderRast <- function(rastersList, uMat, uSource){
 }
 
 for(i in 1:num_sources){
-  writeRaster(sobolTotalOrderRast(out_vals_rasts, out_u_mat, i), paste('SobolTotalOrder', setupList[i+1],'.tif', sep =''), overwrite = TRUE)
+  writeRaster(sobolTotalOrderRast(out_vals_rasts_var, out_u_mat, i), ffOut(paste('SobolOuts/SobolTotalOrder', setupList[i+1],'.tif', sep ='')), overwrite = TRUE)
 }
 
-stoHost <- rast('SobolTotalOrderhost.tif')
-stoIC <- rast('SobolTotalOrderic.tif')
-stoPar <- rast('SobolTotalOrderpar.tif')
+stoHost <- rast(ffOut('SobolOuts/SobolTotalOrderhost.tif'))
+stoIC <- rast(ffOut('SobolOuts/SobolTotalOrderic.tif'))
+stoPar <- rast(ffOut('SobolOuts/SobolTotalOrderpar.tif'))
 
 stoTotal <- stoHost + stoIC + stoPar
+
+#Plotting (to add)
+
+testpal <- c('#8B0000', "#FFFFD9", "#E0F3B2", "#97D6B8", "#41B6C4", "#1E80B8", "#24429A", "#081D58", "#702963")
+
+# test_uncert <- rep(0, length(setupList))
+# 
+# for(i in 1:length(setupList)){
+#   test_uncert[i] <- eu1_uncert_outs[i*4]
+# }
+# 
+# plot_mat <- matrix(0, nrow = 5, ncol = 2)
+# plot_mat[1,1] <- test_uncert[2] - test_uncert[5]
+# plot_mat[2,1] <- test_uncert[3] - test_uncert[5]
+# plot_mat[3,1] <- test_uncert[4] - test_uncert[5]
+# plot_mat[4,1] <- test_uncert[5]
+# plot_mat[5,1] <- test_uncert[1] - plot_mat[1,1] - plot_mat[2,1] - plot_mat[3,1] - test_uncert[5]
+# for(i in 1:5){
+#   plot_mat[i,2] <- round(plot_mat[i,1]/test_uncert[1], 4)
+# }
+# 
+# plot_df <- data.frame(
+#   area = plot_mat[,1],
+#   pct = plot_mat[,2],
+#   plot = rep('Uncertainty', 5),
+#   type = c('Host', 'Initial Conditions', 'Parameter', 'Process', 'Interactions')
+# )
+# 
+# 
+# library(ggplot2)
+# barvarpct <- ggplot(data = plot_df, aes(x = plot, y = area, fill = type, label = paste((100 * pct), '%', sep =''))) +
+#   geom_bar(stat = 'identity') +
+#   scale_fill_brewer(palette = 'Set1') +
+#   theme_minimal() +
+#   labs(title = 'PoPS Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
+#   geom_text(size = 3, position = position_stack(vjust = 0.5))
+# 
+# constbarvarpct <- ggplot(data = plot_df, aes(x = plot, y = pct, fill = type, label = paste((100 * pct), '%', sep =''))) +
+#   geom_bar(stat = 'identity') +
+#   scale_fill_brewer(palette = 'Set1') +
+#   theme_minimal() +
+#   labs(title = 'PoPS Uncertainty Partitioning (1 year)', x = '', y = 'Variance in Infected Area', fill = 'Uncertainty Type') +
+#   geom_text(size = 3, position = position_stack(vjust = 0.5))
+# eTime <- proc.time() - sTime
