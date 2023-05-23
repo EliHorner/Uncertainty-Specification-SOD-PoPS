@@ -721,7 +721,7 @@ natural_kernel_type <- "cauchy"
 anthropogenic_kernel_type <- "cauchy"
 natural_dir <- "NONE"
 anthropogenic_dir <- "NONE"
-number_of_iterations <- 2000
+number_of_iterations <- 100
 number_of_cores <- 1
 pesticide_duration <- c(0)
 pesticide_efficacy <- 1.0
@@ -752,18 +752,18 @@ network_movement <- "walk"
 output_folder_path <- ''
 
 # Parallel Method
-# registerDoParallel(length(setupList))
-# eu1_uncert_outs <- foreach(i = 1:length(setupList), .combine = 'cbind') %dopar% {
-#   uncertRunsWrite(setupList[i], 1)
-# }
-# 
-# stopImplicitCluster()
+registerDoParallel(length(setupList))
+eu1_uncert_outs <- foreach(i = 1:length(setupList), .combine = 'cbind') %dopar% {
+  uncertRunsSobol(setupList[i], 1)
+}
+
+stopImplicitCluster()
 
 # Sequential Method
-eu1_uncert_outs <- matrix(nrow = 2, ncol = (2 * length(setupList)))
-for(i in 1:length(setupList)){
-  eu1_uncert_outs[,((2*i)-1):(2*i)] <- uncertRunsSobol(setupList[i], 1)
-}
+# eu1_uncert_outs <- matrix(nrow = 2, ncol = (2 * length(setupList)))
+# for(i in 1:length(setupList)){
+#   eu1_uncert_outs[,((2*i)-1):(2*i)] <- uncertRunsSobol(setupList[i], 1)
+# }
 # End Methods
 
 num_sources <- 3
