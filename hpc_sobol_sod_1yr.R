@@ -799,16 +799,16 @@ for(i in 1:num_sources){
 sobol_mat[4,] <- sobol_mat[1,] / sum(sobol_mat[1,])
 sobol_mat[5,] <- sobol_mat[2,] / sum(sobol_mat[2,])
 
-barplot(sobol_mat[2,], col = pal2, main = 'Sobol Method', ylab = 'Sobol Index')
-barplot(sobol_mat[1,], col = pal, add = TRUE)
+#barplot(sobol_mat[2,], col = pal2, main = 'Sobol Method', ylab = 'Sobol Index')
+#barplot(sobol_mat[1,], col = pal, add = TRUE)
 
 
 # Create Sobol index output rasters
 # [[x]] indexes raster stacks
 
 out_vals_rasts_var <- c(rast(ffOut('Rasters/All_SD.tif'))^2, rast(ffOut('Rasters/Host_SD.tif'))^2, rast(ffOut('Rasters/IC_SD.tif'))^2, rast(ffOut('Rasters/Par_SD.tif'))^2, rast(ffOut('Rasters/NoHost_SD.tif'))^2, rast(ffOut('Rasters/NoIC_SD.tif'))^2, rast(ffOut('Rasters/NoPar_SD.tif'))^2, rast(ffOut('Rasters/None_SD.tif'))^2)
-out_vals_rasts <- c(rast('All_Mean.tif'), rast('Host_Mean.tif'), rast('IC_Mean.tif'), rast('Par_Mean.tif'), rast('NoHost_Mean.tif'), rast('NoIC_Mean.tif'), rast('NoPar_Mean.tif'), rast('None_Mean.tif'))
-out_vals_rasts_prob <- c(rast('AllP.tif'), rast('HostP.tif'), rast('ICP.tif'), rast('ParP.tif'), rast('NoHostP.tif'), rast('NoICP.tif'), rast('NoParP.tif'), rast('NoneP.tif'))
+#out_vals_rasts <- c(rast('All_Mean.tif'), rast('Host_Mean.tif'), rast('IC_Mean.tif'), rast('Par_Mean.tif'), rast('NoHost_Mean.tif'), rast('NoIC_Mean.tif'), rast('NoPar_Mean.tif'), rast('None_Mean.tif'))
+#out_vals_rasts_prob <- c(rast('AllP.tif'), rast('HostP.tif'), rast('ICP.tif'), rast('ParP.tif'), rast('NoHostP.tif'), rast('NoICP.tif'), rast('NoParP.tif'), rast('NoneP.tif'))
 
 for(i in 1:num_sources){
   writeRaster(sobolFirstOrderRast(out_vals_rasts_var, out_u_mat, i), ffOut(paste('SobolOuts/SobolFirstOrder', setupList[i+1],'.tif', sep ='')), overwrite = TRUE)
@@ -846,7 +846,7 @@ stoTotal <- stoHost + stoIC + stoPar
 
 #Plotting (to add)
 
-testpal <- c('#8B0000', "#FFFFD9", "#E0F3B2", "#97D6B8", "#41B6C4", "#1E80B8", "#24429A", "#081D58", "#702963")
+#testpal <- c('#8B0000', "#FFFFD9", "#E0F3B2", "#97D6B8", "#41B6C4", "#1E80B8", "#24429A", "#081D58", "#702963")
 
 # test_uncert <- rep(0, length(setupList))
 # 
