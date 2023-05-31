@@ -820,7 +820,7 @@ sfoPar <- rast(ffOut('SobolOuts/SobolFirstOrderpar.tif'))
 
 sfoTotal <- sfoHost + sfoIC + sfoPar
 
-plot(sfoIC / sfoTotal, ext = multiWindow, col = testpal, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0000001, 10))
+#plot(sfoIC / sfoTotal, ext = multiWindow, col = testpal, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0000001, 10))
 
 
 sobolTotalOrderRast <- function(rastersList, uMat, uSource){

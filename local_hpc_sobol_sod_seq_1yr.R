@@ -6,14 +6,14 @@ library(folderfun)
 library(doParallel)
 # library(plyr)
 
-setff("In", "/usr/local/usrapps/rkmeente/eahorner/sod_inputs")
-setff("Out", "/usr/local/usrapps/rkmeente/eahorner/outputs")
+setff("In", "H:/Shared drives/Data/Raster/Regional/SOD_OR/")
+setff("Out", "C:/Users/eahorner/Documents/GitHub/Uncertainty-Specification-SOD-PoPS/test")
 
 uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'all'){
     initial_condition_uncertainty <- TRUE
     host_uncertainty <- TRUE
-    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
     eu1_all <- PoPS::pops_multirun(infected_file,
                                    host_file,
                                    total_populations_file,
@@ -92,7 +92,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'nohost'){
     initial_condition_uncertainty <- TRUE
     host_uncertainty <- FALSE
-    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
     eu1_nohost <- PoPS::pops_multirun(infected_file,
                                       host_file,
                                       total_populations_file,
@@ -171,7 +171,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'noic'){
     initial_condition_uncertainty <- FALSE
     host_uncertainty <- TRUE
-    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
     eu1_noic <- PoPS::pops_multirun(infected_file,
                                     host_file,
                                     total_populations_file,
@@ -487,7 +487,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'par'){
     initial_condition_uncertainty <- FALSE
     host_uncertainty <- FALSE
-    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
     eu1_par <- PoPS::pops_multirun(infected_file,
                                    host_file,
                                    total_populations_file,
@@ -682,15 +682,15 @@ sobolTotalOrderRast <- function(rastersList, uMat, uSource){
 
 setupList <- c('all', 'host', 'ic', 'par', 'nohost', 'noic', 'nopar', 'none')
 
-infected_file <- ffIn("sod_inputs/EOYInfections/new_method_mean_sd_end_inf_2021_eu1.tif")
-host_file <- ffIn("sod_inputs/Hosts/mean_sd_hosts_sum.tif")
-total_populations_file <- ffIn("sod_inputs/Hosts/lemma_max100m.tif")
-means <- read.table('sod_inputs/parameters/eu1_2019_means.csv', header = F)
+infected_file <- ffIn("End Of Year Infections/new_method_mean_sd_end_inf_2021_eu1.tif")
+host_file <- ffIn("Hosts/mean_sd_hosts_sum.tif")
+total_populations_file <- ffIn("Hosts/lemma_max100m.tif")
+means <- read.table('parameters/eu1_2019_means.csv', header = F)
 parameter_means <- t(means)
 parameter_means <- parameter_means[1,]
-parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+parameter_cov_matrix <- read.table('parameters/eu1_2019_cov_mat.csv', header = F)
 temp <- TRUE
-temperature_coefficient_file <- ffIn("sod_inputs/Weather/weather_coef_2021.tif")
+temperature_coefficient_file <- ffIn("Weather/weather_coef_2021.tif")
 precip <- FALSE
 precipitation_coefficient_file <- ""
 model_type <- "SI"
@@ -721,7 +721,7 @@ natural_kernel_type <- "cauchy"
 anthropogenic_kernel_type <- "cauchy"
 natural_dir <- "NONE"
 anthropogenic_dir <- "NONE"
-number_of_iterations <- 100
+number_of_iterations <- 10
 number_of_cores <- 1
 pesticide_duration <- c(0)
 pesticide_efficacy <- 1.0
@@ -752,18 +752,18 @@ network_movement <- "walk"
 output_folder_path <- ''
 
 # Parallel Method
-registerDoParallel(length(setupList))
-eu1_uncert_outs <- foreach(i = 1:length(setupList), .combine = 'cbind') %dopar% {
-  uncertRunsSobol(setupList[i], 1)
-}
+# registerDoParallel(length(setupList))
+# eu1_uncert_outs <- foreach(i = 1:length(setupList), .combine = 'cbind') %dopar% {
+#   uncertRunsSobol(setupList[i], 1)
+# }
 
 stopImplicitCluster()
 
 # Sequential Method
-# eu1_uncert_outs <- matrix(nrow = 2, ncol = (2 * length(setupList)))
-# for(i in 1:length(setupList)){
-#   eu1_uncert_outs[,((2*i)-1):(2*i)] <- uncertRunsSobol(setupList[i], 1)
-# }
+eu1_uncert_outs <- matrix(nrow = 2, ncol = (2 * length(setupList)))
+for(i in 1:length(setupList)){
+  eu1_uncert_outs[,((2*i)-1):(2*i)] <- uncertRunsSobol(setupList[i], 1)
+}
 # End Methods
 
 num_sources <- 3
