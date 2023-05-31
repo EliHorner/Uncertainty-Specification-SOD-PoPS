@@ -13,7 +13,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'all'){
     initial_condition_uncertainty <- TRUE
     host_uncertainty <- TRUE
-    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table(ffIn('sod_inputs/parameters/eu1_2019_cov_mat.csv'), header = F)
     eu1_all <- PoPS::pops_multirun(infected_file,
                                    host_file,
                                    total_populations_file,
@@ -92,7 +92,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'nohost'){
     initial_condition_uncertainty <- TRUE
     host_uncertainty <- FALSE
-    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table(ffIn('sod_inputs/parameters/eu1_2019_cov_mat.csv'), header = F)
     eu1_nohost <- PoPS::pops_multirun(infected_file,
                                       host_file,
                                       total_populations_file,
@@ -171,7 +171,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'noic'){
     initial_condition_uncertainty <- FALSE
     host_uncertainty <- TRUE
-    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table(ffIn('sod_inputs/parameters/eu1_2019_cov_mat.csv'), header = F)
     eu1_noic <- PoPS::pops_multirun(infected_file,
                                     host_file,
                                     total_populations_file,
@@ -487,7 +487,7 @@ uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'par'){
     initial_condition_uncertainty <- FALSE
     host_uncertainty <- FALSE
-    parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+    parameter_cov_matrix <- read.table(ffIn('sod_inputs/parameters/eu1_2019_cov_mat.csv'), header = F)
     eu1_par <- PoPS::pops_multirun(infected_file,
                                    host_file,
                                    total_populations_file,
@@ -685,10 +685,10 @@ setupList <- c('all', 'host', 'ic', 'par', 'nohost', 'noic', 'nopar', 'none')
 infected_file <- ffIn("sod_inputs/EOYInfections/new_method_mean_sd_end_inf_2021_eu1.tif")
 host_file <- ffIn("sod_inputs/Hosts/mean_sd_hosts_sum.tif")
 total_populations_file <- ffIn("sod_inputs/Hosts/lemma_max100m.tif")
-means <- read.table('sod_inputs/parameters/eu1_2019_means.csv', header = F)
+means <- read.table(ffIn('sod_inputs/parameters/eu1_2019_means.csv'), header = F)
 parameter_means <- t(means)
 parameter_means <- parameter_means[1,]
-parameter_cov_matrix <- read.table('sod_inputs/parameters/eu1_2019_cov_mat.csv', header = F)
+parameter_cov_matrix <- read.table(ffIn('sod_inputs/parameters/eu1_2019_cov_mat.csv'), header = F)
 temp <- TRUE
 temperature_coefficient_file <- ffIn("sod_inputs/Weather/weather_coef_2021.tif")
 precip <- FALSE
