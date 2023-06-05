@@ -6,8 +6,8 @@ library(folderfun)
 library(doParallel)
 # library(plyr)
 
-setff("In", "/usr/local/usrapps/rkmeente/eahorner/sod_inputs")
-setff("Out", "/usr/local/usrapps/rkmeente/eahorner/outputs")
+setff("In", "/share/rkmeente/eahorner/sod_inputs")
+setff("Out", "/share/rkmeente/eahorner/outputs")
 
 uncertRunsSobol <- function(case = 'all', years = 1){
   if (case == 'all'){
