@@ -683,7 +683,7 @@ sobolTotalOrderRast <- function(rastersList, uMat, uSource){
 setupList <- c('all', 'host', 'ic', 'par', 'nohost', 'noic', 'nopar', 'none')
 
 infected_file <- ffIn("sod_inputs/EOYInfections/new_method_mean_sd_end_inf_2021_eu1.tif")
-host_file <- ffIn("sod_inputs/Hosts/mean_sd_hosts_sum.tif")
+host_file <- ffIn("sod_inputs/Hosts/mean_sd_host_mapping_tanoak.tif")
 total_populations_file <- ffIn("sod_inputs/Hosts/lemma_max100m.tif")
 means <- read.table(ffIn('sod_inputs/parameters/eu1_2019_means.csv'), header = F)
 parameter_means <- t(means)
