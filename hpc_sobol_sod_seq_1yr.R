@@ -2,7 +2,6 @@
 #remotes::install_github("ncsu-landscape-dynamics/rpops")
 library(PoPS)
 library(terra)
-library(folderfun)
 library(doParallel)
 # library(plyr)
 
