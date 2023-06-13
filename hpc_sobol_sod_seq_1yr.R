@@ -826,6 +826,7 @@ sfoIC <- rast(paste0(outpath, 'SobolOuts/SobolFirstOrderic.tif'))
 sfoPar <- rast(paste0(outpath, 'SobolOuts/SobolFirstOrderpar.tif'))
 
 sfoTotal <- sfoHost + sfoIC + sfoPar
+writeRaster(sfoTotal, paste0(outpath, 'SobolOuts/SobolFirstOrderSum.tif'), overwrite = TRUE)
 
 #plot(sfoIC / sfoTotal, ext = multiWindow, col = testpal, breaks = c(-10, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0000001, 10))
 
@@ -850,6 +851,7 @@ stoIC <- rast(paste0(outpath, 'SobolOuts/SobolTotalOrderic.tif'))
 stoPar <- rast(paste0(outpath, 'SobolOuts/SobolTotalOrderpar.tif'))
 
 stoTotal <- stoHost + stoIC + stoPar
+writeRaster(stoTotal, paste0(outpath, 'SobolOuts/SobolTotalOrderSum.tif'), overwrite = TRUE)
 
 #Plotting (to add)
 

@@ -153,7 +153,7 @@ terra::plot(Host_SD_E, main = 'Host', ext = multiWindow)
 terra::plot(IC_SD_E, main = 'IC', ext = multiWindow)
 par(mfrow = c(1,1))
 
-#Sobol Indices Muti-Plots
+#Sobol Indices Multi-Plots
 
 palovr <- colorRampPalette(brewer.pal(9, 'OrRd'))(7)
 par(mfrow = c(2,2))
@@ -246,6 +246,34 @@ plot(varScaledSTOTotal, ext = multiWindow, main = 'Variance Scaled Sobol Total I
 plot(varScaledSTOHost, ext = multiWindow, main = 'Host Variance Scaled Sobol Total Index', col = pal, breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1))
 plot(varScaledSTOPar, ext = multiWindow, main = 'Parameter Variance Scaled Sobol Total Index', col = pal, breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1))
 plot(varScaledSTOIC, ext = multiWindow, main = 'Initial Condition Variance Scaled Sobol Total Index', col = pal, breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1))
+par(mfrow = c(1,1))
+
+#HPC (new method host) Sobol Indices Plot
+par(mfrow = c(2,2))
+plot(hpc_stototal, ext = multiWindow, main = 'Sobol Total Indices Sum (All sources)', col = palt)
+plot(hpc_stohost, ext = multiWindow, main = 'Host Sobol Total Index % of Total', col = pal)
+plot(hpc_stopar, ext = multiWindow, main = 'Parameter Sobol Total Index % of Total', col = pal)
+plot(hpc_stoic, ext = multiWindow, main = 'Initial Condition Sobol Total Index % of Total', col = pal)
+par(mfrow = c(1,1))
+
+#HPC (new method host) Variance Scaled Sobol Indices Plot
+par(mfrow = c(2,2))
+plot(hpc_stototal * hpc_sd, ext = multiWindow, main = 'Sobol Total Indices Sum (All sources)', col = palt)
+plot((hpc_stohost / hpc_stototal) * hpc_sd, ext = multiWindow, main = 'Host Sobol Total Index % of Total', col = pal,  breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 3.5))
+plot((hpc_stopar / hpc_stototal) * hpc_sd, ext = multiWindow, main = 'Parameter Sobol Total Index % of Total', col = pal,  breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 3.5))
+plot((hpc_stoic / hpc_stototal) * hpc_sd, ext = multiWindow, main = 'Initial Condition Sobol Total Index % of Total', col = pal,  breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 3.5))
+par(mfrow = c(1,1))
+
+#Same but for single window
+par(mfrow = c(2,2))
+plot(hpc_stototal * hpc_sd, ext = singleWindow, main = 'Sobol Total Indices Sum (All sources)', col = palt)
+plot(sodPoints, ext = singleWindow, col = 'black', add = TRUE)
+plot((hpc_stohost / hpc_stototal) * hpc_sd, ext = singleWindow, main = 'Host Sobol Total Index % of Total', col = pal,  breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 3.5))
+plot(sodPoints, ext = singleWindow, col = 'black', add = TRUE)
+plot((hpc_stopar / hpc_stototal) * hpc_sd, ext = singleWindow, main = 'Parameter Sobol Total Index % of Total', col = pal,  breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 3.5))
+plot(sodPoints, ext = singleWindow, col = 'black', add = TRUE)
+plot((hpc_stoic / hpc_stototal) * hpc_sd, ext = singleWindow, main = 'Initial Condition Sobol Total Index % of Total', col = pal,  breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 3.5))
+plot(sodPoints, ext = singleWindow, col = 'black', add = TRUE)
 par(mfrow = c(1,1))
 
 par(mfrow = c(2,2))
