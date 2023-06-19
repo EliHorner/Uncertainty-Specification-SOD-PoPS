@@ -752,7 +752,7 @@ network_movement <- "walk"
 output_folder_path <- ''
 
 # Parallel Method
-cl <- makeCluster(length(setupList))
+cl <- makeCluster(length(setupList), type = 'FORK')
 registerDoParallel(cl)
 eu1_uncert_outs <- foreach(i = 1:length(setupList), .combine = 'cbind') %dopar% {
   uncertRunsSobol(setupList[i], 1)
