@@ -2,7 +2,7 @@
 #remotes::install_github("ncsu-landscape-dynamics/rpops")
 library(PoPS)
 library(terra)
-library(Rmpi)
+#library(Rmpi)
 library(doParallel)
 # library(plyr)
 
@@ -721,7 +721,7 @@ natural_kernel_type <- "cauchy"
 anthropogenic_kernel_type <- "cauchy"
 natural_dir <- "NONE"
 anthropogenic_dir <- "NONE"
-number_of_iterations <- 2000
+number_of_iterations <- 10
 number_of_cores <- 1
 pesticide_duration <- c(0)
 pesticide_efficacy <- 1.0
@@ -752,12 +752,13 @@ network_movement <- "walk"
 output_folder_path <- ''
 
 # Parallel Method
-registerDoParallel(length(setupList))
+cl <- makeCluster(length(setupList))
+registerDoParallel(cl)
 eu1_uncert_outs <- foreach(i = 1:length(setupList), .combine = 'cbind') %dopar% {
   uncertRunsSobol(setupList[i], 1)
 }
 
-stopImplicitCluster()
+stopCluster(cl)
 
 # Sequential Method
 # eu1_uncert_outs <- matrix(nrow = 2, ncol = (2 * length(setupList)))
