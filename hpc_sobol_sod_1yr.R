@@ -1,10 +1,8 @@
 ## Setup multirun
-#remotes::install_github("ncsu-landscape-dynamics/rpops")
 library(PoPS)
 library(terra)
-#library(Rmpi)
+library(Rmpi)
 library(doParallel)
-# library(plyr)
 
 inpath <- "/share/rkmeente/eahorner/sod_inputs/"
 outpath <- "/share/rkmeente/eahorner/outputs/"
