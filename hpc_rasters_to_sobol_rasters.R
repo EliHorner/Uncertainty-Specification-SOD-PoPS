@@ -27,7 +27,7 @@ sobolTotalOrder <- function(valuesList, uMat, uSource){
 
 #Sobol Calculations on Output Rasters
 
-setupList <- c('all', 'host', 'ic', 'par', 'nohost', 'noic', 'nopar', 'none')
+setupList <- c('All', 'Host', 'IC', 'Par', 'NoHost', 'NoIC', 'NoPar', 'None')
 num_sources <- 3
 
 out_u_mat <- matrix(0, nrow = num_sources, ncol = length(setupList))

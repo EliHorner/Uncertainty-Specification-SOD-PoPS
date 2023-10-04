@@ -47,6 +47,20 @@ out_u_mat[,((4*samples)+1):(5*samples)] = c(0,1,1)
 out_u_mat[,((5*samples)+1):(6*samples)] = c(1,0,1)
 out_u_mat[,((6*samples)+1):(7*samples)] = c(1,1,0)
 
+means_out_u_mat <- matrix(0, nrow = num_sources, ncol = length(setupList))
+#Rows = host, ic, par, Cols = Combinations
+means_out_u_mat[,1] = c(1,1,1)
+means_out_u_mat[,2] = c(1,0,0)
+means_out_u_mat[,3] = c(0,1,0)
+means_out_u_mat[,4] = c(0,0,1)
+means_out_u_mat[,5] = c(0,1,1)
+means_out_u_mat[,6] = c(1,0,1)
+means_out_u_mat[,7] = c(1,1,0)
+
+#PRe-compute total variance to save time
+sampleVar <- (stdev(RastsStack))^2
+valSampleVar <- global(sampleVar, sum, na.rm = TRUE)
+
 #Sobol Functions
 sobolFirstOrder <- function(valuesList, uMat, uSource){
   sortList <- uMat[uSource,]
@@ -92,24 +106,11 @@ SFOvals <- c(rep(0, num_sources))
 STOvals <- c(rep(0, num_sources))
 
 for(i in 1:num_sources){
- #SFOvals[i] <- sobolFirstOrder(ValsStack$sum, out_u_mat, i)
+ SFOvals[i] <- sobolFirstOrder(ValsStack$sum, out_u_mat, i)
  STOvals[i] <- sobolTotalOrder(MeanValsStack$sum, means_out_u_mat, i, valSampleVar$sum)
 }
 
 #Run Sobol Analyses on Rasters (at cell level)
-means_out_u_mat <- matrix(0, nrow = num_sources, ncol = length(setupList))
-#Rows = host, ic, par, Cols = Combinations
-means_out_u_mat[,1] = c(1,1,1)
-means_out_u_mat[,2] = c(1,0,0)
-means_out_u_mat[,3] = c(0,1,0)
-means_out_u_mat[,4] = c(0,0,1)
-means_out_u_mat[,5] = c(0,1,1)
-means_out_u_mat[,6] = c(1,0,1)
-means_out_u_mat[,7] = c(1,1,0)
-
-sampleVar <- (stdev(RastsStack))^2
-valSampleVar <- global(sampleVar, sum, na.rm = TRUE)
-
 for(i in 1:num_sources){
   writeRaster(sobolFirstOrderRast(MeansStack, means_out_u_mat, i, sampleVar), paste0(outpath, paste('SobolFirstOrder', setupList[i+1],'.tif', sep ='')), overwrite = TRUE)
 }
@@ -125,3 +126,8 @@ for(i in 1:num_sources){
 stoHost <- rast(paste0(outpath, '/SobolTotalOrderhost.tif'))
 stoIC <- rast(paste0(outpath, '/SobolTotalOrderic.tif'))
 stoPar <- rast(paste0(outpath, '/SobolTotalOrderpar.tif'))
+
+library(RColorBrewer)
+pal <- colorRampPalette(brewer.pal(9, 'OrRd'))(25)
+
+testPoints <- mean(RastsStack)
