@@ -1,0 +1,100 @@
+---
+title: "Sobol Uncertainty Partitioning Example"
+author: "Eli Horner"
+date: "2023-06-19"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(PoPS)
+library(terra)
+```
+
+# Sobol Uncertianty Partitioning Example
+
+First set path to drive and set extents we want to work with
+
+```{r}
+inpath <- "H:/My Drive/NEON Unconference 2023 Spatial Sobol for Uncertainty/Inputs for Sobol Method/Rasters/"
+e <- terra::ext(c(380000,400000,4678000,4711000))
+singleWindow <- terra::ext(c(392000, 397000, 4705000, 4708000))
+multiWindow <- terra::ext(c(381000, 390000, 4682000, 4689000))
+
+all_mean <- rast(paste0(inpath, 'All_Mean.tif'))
+par(mfrow = c(2,2))
+plot(all_mean)
+plot(all_mean, ext = e)
+plot(all_mean, ext = singleWindow)
+plot(all_mean, ext = multiWindow)
+```
+Next, load in Sobol Functions, load in all of our rasters of uncertainty to be analyzed, and create our control matrix.
+
+```{r}
+sobolFirstOrder <- function(valuesList, uMat, uSource){
+  sortList <- uMat[uSource,]
+  numWith <- mean(valuesList[sortList == 1])
+  numWithout <- mean(valuesList[sortList == 0])
+  numerator <- var(c(numWith, numWithout))
+  return(numerator/var(valuesList))
+}
+
+sobolFirstOrderRast <- function(rastersList, uMat, uSource){
+  sortList <- uMat[uSource,]
+  numWith <- mean(rastersList[[sortList == 1]])
+  numWithout <- mean(rastersList[[sortList == 0]])
+  numerator <- (stdev(numWith, numWithout))^2
+  return(numerator/(stdev(rastersList))^2)
+}
+
+sobolTotalOrder <- function(valuesList, uMat, uSource){
+  sortMat <- uMat[-uSource,]
+  varlist <- c(rep(0, ncol(unique(sortMat, MARGIN = 2))))
+  for(i in 1:ncol(unique(sortMat, MARGIN = 2))){
+    varlist[i] <- var(valuesList[apply(sortMat, 2, identical, unique(sortMat, MARGIN = 2)[,i])])
+  }
+  numerator <- mean(varlist)
+  return(numerator/ var(valuesList))
+}
+
+sobolTotalOrderRast <- function(rastersList, uMat, uSource){
+  sortMat <- uMat[-uSource,]
+  r <- rast(nrow = 1073, ncol = 686, ext = ext(all_mean), crs = crs(all_mean))
+  varRastlist <- c(rep(r, ncol(unique(sortMat, MARGIN = 2))))
+  for(i in 1:ncol(unique(sortMat, MARGIN = 2))){
+    varRastlist[[i]] <- stdev(rastersList[[apply(sortMat, 2, identical, unique(sortMat, MARGIN = 2)[,i])]])^2
+  }
+  numerator <- mean(varRastlist)
+  return(numerator/ (stdev(rastersList)^2))
+}
+
+num_sources = 3
+
+outs_var_rasts <- c(rast(paste0(inpath, 'All_SD.tif'))^2, rast(paste0(inpath, 'Host_SD.tif'))^2, rast(paste0(inpath, 'IC_SD.tif'))^2, rast(paste0(inpath, 'Par_SD.tif'))^2, rast(paste0(inpath, 'NoHost_SD.tif'))^2, rast(paste0(inpath, 'NoIC_SD.tif'))^2, rast(paste0(inpath, 'NoPar_SD.tif'))^2, rast(paste0(inpath, 'None_SD.tif'))^2)
+
+#Uncertainty Matrix (Control Matrix)
+outs_u_mat <- matrix(0, nrow = num_sources, ncol = 2^(num_sources))
+#Rows = host, ic, par, Cols = Combinations
+outs_u_mat[,1] = c(1,1,1) #All sources
+outs_u_mat[,2] = c(1,0,0) #Host only
+outs_u_mat[,3] = c(0,1,0) #IC only
+outs_u_mat[,4] = c(0,0,1) #Par only
+outs_u_mat[,5] = c(0,1,1) #IC + Par
+outs_u_mat[,6] = c(1,0,1) #Host + Par
+outs_u_mat[,7] = c(1,1,0) #Host + IC
+outs_u_mat[,8] = c(0,0,0) #No sources
+```
+
+Now, we perform the Sobol analysis using the functions. This can be done with data aggregated over the eniter study area, selected parts of the study area, or using the Rast functions, at the cell level.
+
+```{r}
+stoHost <- sobolTotalOrderRast(out_vals_rasts_var, out_u_mat, 1)
+stoIC <- sobolTotalOrderRast(out_vals_rasts_var, out_u_mat, 2)
+stoPar <- sobolTotalOrderRast(out_vals_rasts_var, out_u_mat, 3)
+
+sfoHost <- sobolFirstOrderRast(out_vals_rasts_var, out_u_mat, 1)
+sfoIC <- sobolFirstOrderRast(out_vals_rasts_var, out_u_mat, 2)
+sfoPar <- sobolFirstOrderRast(out_vals_rasts_var, out_u_mat, 3)
+```
+
+Since Sobol indices scale by total variance, for the cell calculations, the indices are normalized by the variance in each individual cell. We can multiply each cell's output by its predictive uncertainty, to get a better picture of where uncertainty is high, both overall and for each source.
