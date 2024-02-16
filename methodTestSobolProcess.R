@@ -1,20 +1,22 @@
-#HPC Individual Rasters to Sobol Indices Rasters
+#Test for different function methods to calculate SFO and STO indices
 library(terra)
 
-#Setup values (change as needed)
+#Setup (set to 100 rasters per case to start)
 num_sources <- 5
-samples <- 10000
+source_list <- c('Host', 'IC', 'Weather', 'Par', 'Process')
+samples <- 100
 
 #File path setup
 setupList <- paste0('case', seq(1,32))
 inpath <- "P:/PoPS_Sobol_Analysis/outputs/"
 outpath <- "P:/PoPS_Sobol_Analysis/outputs/Sobol Outputs/"
 
-#Read in Rasters (Warning: 320k rasters take up ~25GB of memory and will load slowly)
+#Read in Rasters (Warning: Will make a lot of rasters)
 for (i in setupList){
   fullPath <- paste0(inpath, i, '/pops_runs/')
   filelist <- list.files(fullPath, pattern = "inf*")
-  temp <- rast(paste0(fullPath, filelist))
+  sampleslist <- filelist[1:100]
+  temp <- rast(paste0(fullPath, sampleslist))
   assign(paste0(i, "Rasts"), temp)
 }
 
@@ -22,29 +24,23 @@ RastsStack <- c(case1Rasts, case2Rasts, case3Rasts, case4Rasts, case5Rasts, case
                 case9Rasts, case10Rasts, case11Rasts, case12Rasts, case13Rasts, case14Rasts, case15Rasts, case16Rasts, 
                 case17Rasts, case18Rasts, case19Rasts, case20Rasts, case21Rasts, case22Rasts, case23Rasts, case24Rasts, 
                 case25Rasts, case26Rasts, case27Rasts, case28Rasts, case29Rasts, case30Rasts, case31Rasts, case32Rasts)
-MeansStack <- mean(case1Rasts)
+
+mean_temp <- list(mean(get(paste0(setupList[1], 'Rasts'))))
 for (i in 2:length(setupList)){
-  MeansStack <- c(MeansStack, mean(setupList[i]))
+  mean_temp <- append(mean_temp, mean(get(paste0(setupList[i], 'Rasts'))))
 }
-
-#Warning: This also takes a long time and requires ~25GB of memory
-writeRaster(RastsStack, paste0(outpath, 'RastsStack.tif'))
-writeRaster(MeansStack, paste0(outpath, 'MeansStack.tif'))
-#RastsStack <- rast(paste0(outpath, 'RastsStack.tif'))
-#MeansStack <- rast(paste0(outpath, 'MeansStack.tif'))
-
-#Less efficient method that allows taking any numbers up to samples
-#Figure out if this can be made into a raster stack rather than a list
-# out_vals_rasts <- rast(paste0(inpath, "All/infected_1.tif"))
-# for()
-# for(i in 2:samples){
-#   out_vals_rasts <- c(out_vals_rasts, rast(paste0(inpath, "infected_", i, ".tif")))
-# }
+MeansStack <- rast(mean_temp)
 
 ValsStack <- global(RastsStack, sum, na.rm = TRUE)
 MeanValsStack <- global(MeansStack, sum, na.rm = TRUE)
-write.csv(ValsStack, paste0(outpath, 'ValsStack.csv'))
-write.csv(MeanValsStack, paste0(outpath, 'MeanValsStack.csv'))
+
+#Pre-compute total variance to save time
+sampleVar <- (stdev(RastsStack))^2
+# writeRaster(sampleVar, paste0(outpath, 'sampleVar.tif'))
+valSampleVar <- global(sampleVar, sum, na.rm = TRUE)
+
+# Read from file
+# sampleVar <- terra::rast(paste0(outpath, 'sampleVar.tif'))
 
 #Control Matrix
 out_u_mat <- matrix(0, nrow = num_sources, ncol = samples*(2^num_sources))
@@ -117,13 +113,7 @@ means_out_u_mat[,30] = c(0,0,0,1,0)
 means_out_u_mat[,31] = c(0,0,0,0,1)
 means_out_u_mat[,32] = c(0,0,0,0,0)
 
-
-#PRe-compute total variance to save time
-sampleVar <- (stdev(RastsStack))^2
-writeRaster(sampleVar, paste0(outpath, 'sampleVar.tif'))
-valSampleVar <- global(sampleVar, sum, na.rm = TRUE)
-
-#Sobol Functions
+#Sobol Functions (Original)
 sobolFirstOrder <- function(valuesList, uMat, uSource){
   sortList <- uMat[uSource,]
   numWith <- mean(valuesList[sortList == 1])
@@ -163,36 +153,61 @@ sobolTotalOrderRast <- function(rastersList, uMat, uSource, totalVar){
   return(numerator/ totalVar)
 }
 
-#Run Summarized Sobol Analyses (whole study area)
-SFOvals <- c(rep(0, num_sources))
-STOvals <- c(rep(0, num_sources))
+#Run Summarized Sobol Analyses (whole study area) Original Method
+SFOvalsOriginalTest <- c(rep(0, num_sources))
+STOvalsOriginalTest <- c(rep(0, num_sources))
 
 for(i in 1:num_sources){
- SFOvals[i] <- sobolFirstOrder(ValsStack$sum, out_u_mat, i)
- STOvals[i] <- sobolTotalOrder(MeanValsStack$sum, means_out_u_mat, i, valSampleVar$sum)
+  SFOvalsOriginalTest[i] <- sobolFirstOrder(ValsStack$sum, out_u_mat, i)
+  STOvalsOriginalTest[i] <- sobolTotalOrder(MeanValsStack$sum, means_out_u_mat, i, valSampleVar$sum)
 }
 
-write.csv(SFOvals, paste0(outpath, 'SFOVals.csv'))
-write.csv(STOvals, paste0(outpath, 'STOVals.csv'))
+write.csv(SFOvalsOriginalTest, paste0(outpath, 'SFOValsOriginalTest.csv'))
+write.csv(STOvalsOriginalTest, paste0(outpath, 'STOValsOriginalTest.csv'))
 
-#Run Sobol Analyses on Rasters (at cell level)
+#Run Sobol Analyses on Rasters (at cell level) Original Method
 for(i in 1:num_sources){
-  writeRaster(sobolFirstOrderRast(MeansStack, means_out_u_mat, i, sampleVar), paste0(outpath, paste('SobolFirstOrder', setupList[i+1],'.tif', sep ='')), overwrite = TRUE)
+  assign(paste0('SFO_original_', source_list[i]), sobolFirstOrderRast(MeansStack, means_out_u_mat, i, sampleVar))
 }
-
-# sfoHost <- rast(paste0(outpath, '/SobolFirstOrderhost.tif'))
-# sfoIC <- rast(paste0(outpath, '/SobolFirstOrderic.tif'))
-# sfoPar <- rast(paste0(outpath, '/SobolFirstOrderpar.tif'))
 
 for(i in 1:num_sources){
-  writeRaster(sobolTotalOrderRast(MeansStack, means_out_u_mat, i, sampleVar), paste0(outpath, paste('SobolTotalOrder', setupList[i+1],'.tif', sep ='')), overwrite = TRUE)
+  assign(paste0('STO_original_', source_list[i]), sobolTotalOrderRast(MeansStack, means_out_u_mat, i, sampleVar))
 }
 
-# stoHost <- rast(paste0(outpath, '/SobolTotalOrderhost.tif'))
-# stoIC <- rast(paste0(outpath, '/SobolTotalOrderic.tif'))
-# stoPar <- rast(paste0(outpath, '/SobolTotalOrderpar.tif'))
+#Method 2: Variance instead of Mean
 
-# library(RColorBrewer)
-# pal <- colorRampPalette(brewer.pal(9, 'OrRd'))(25)
-# 
-# testPoints <- mean(RastsStack)
+#Pre compute Variances
+var_temp <- list(stdev(get(paste0(setupList[1], 'Rasts')))^2)
+for (i in 2:length(setupList)){
+  var_temp <- append(var_temp, (stdev(get(paste0(setupList[i], 'Rasts')))^2))
+}
+VarStack <- rast(var_temp)
+
+VarValsStack <- global(VarStack, sum, na.rm = TRUE)
+
+#Pre-compute total variance to save time
+# sampleVar <- (stdev(RastsStack))^2
+VarVar <- (stdev(VarStack))^2
+# writeRaster(sampleVar, paste0(outpath, 'sampleVar.tif'))
+testVar <- global(VarVar, sum, na.rm = TRUE)
+
+#Run Summarized Sobol Analyses (whole study area) Var Method (aka derivatives)
+SFOvalsVarTest <- c(rep(0, num_sources))
+STOvalsVarTest <- c(rep(0, num_sources))
+
+for(i in 1:num_sources){
+  SFOvalsVarTest[i] <- sobolFirstOrder(VarValsStack$sum, means_out_u_mat, i)
+  STOvalsVarTest[i] <- sobolTotalOrder(VarValsStack$sum, means_out_u_mat, i, testVar$sum)
+}
+
+write.csv(SFOvalsVarTest, paste0(outpath, 'SFOValsVarTest.csv'))
+write.csv(STOvalsVarTest, paste0(outpath, 'STOValsVarTest.csv'))
+
+#Run Sobol Analyses on Rasters (at cell level) Var Method
+for(i in 1:num_sources){
+  assign(paste0('SFO_var_', source_list[i]), sobolFirstOrderRast(VarStack, means_out_u_mat, i, VarVar))
+}
+
+for(i in 1:num_sources){
+  assign(paste0('STO_var_', source_list[i]), sobolTotalOrderRast(VarStack, means_out_u_mat, i, VarVar))
+}
